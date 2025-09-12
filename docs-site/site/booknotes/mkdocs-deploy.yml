@@ -1,0 +1,42 @@
+name: Deploy MkDocs to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install mkdocs-material mkdocs-awesome-pages-plugin pymdown-extensions
+
+      - name: Prepare documentation files
+        run: python prepare_docs.py
+
+      - name: Build MkDocs site
+        run: mkdocs build -f docs-site/mkdocs.yml
+
+      - name's Configure Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Commit and push docs folder
+        run: |
+          git add docs
+          # Commit only if there are changes
+          if ! git diff --staged --quiet; then
+            git commit -m "docs: Build and deploy MkDocs site"
+            git push
+          fi

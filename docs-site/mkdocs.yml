@@ -1,11 +1,15 @@
 # docs-site/mkdocs.yml
 site_name: Notes
-site_url: https://example.com/
+site_url: https://shankyty.github.io/
+site_description: Notes
+site_dir: ../docs
 
 theme:
   name: material
   palette:
     scheme: slate
+  features:
+    - navigation.tabs
 
 
 plugins:

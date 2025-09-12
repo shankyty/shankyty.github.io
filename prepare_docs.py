@@ -1,30 +1,30 @@
-# docs-site/prepare_docs.py
 import os
 import re
 import shutil
 from pathlib import Path
 
 # Configuration
-SOURCE_REPO_PATH = Path('..').resolve()  # The root of your repository
-DOCS_OUTPUT_PATH = Path('docs-site/docs').resolve() # The MkDocs 'docs' directory
-IGNORED_DIRS = {'.git', 'docs-site', 'venv', '__pycache__'}  # Directories to ignore
+SCRIPT_DIR = Path(__file__).parent.resolve()
+SOURCE_REPO_PATH = SCRIPT_DIR
+DOCS_SOURCE_PATH = SCRIPT_DIR / 'docs_src'  # The source for MkDocs markdown files
+IGNORED_DIRS = {'.git', 'docs-site', 'venv', '__pycache__', 'docs', 'docs_src'}  # Directories to ignore
 
 print("--- MkDocs Preparation Script ---")
 print(f"Starting documentation build from: {SOURCE_REPO_PATH}")
-print(f"Outputting to: {DOCS_OUTPUT_PATH}")
+print(f"Preparing markdown sources in: {DOCS_SOURCE_PATH}")
 
 # Ensure the docs output directory exists and is clean
-if DOCS_OUTPUT_PATH.exists():
+if DOCS_SOURCE_PATH.exists():
     # Be careful with this! It deletes the existing docs folder.
     # We only remove sub-items, not the main index.md or the folder itself.
-    for path in DOCS_OUTPUT_PATH.iterdir():
+    for path in DOCS_SOURCE_PATH.iterdir():
         if path.name != 'index.md': # Keep the root index.md if it exists
             if path.is_dir():
                 shutil.rmtree(path)
             else:
                 path.unlink()
 else:
-    DOCS_OUTPUT_PATH.mkdir(parents=True, exist_ok=True)
+    DOCS_SOURCE_PATH.mkdir(parents=True, exist_ok=True)
 
 # Find all README.md files and copy them
 copied_markdown_files = []
@@ -42,9 +42,9 @@ for root_str, dirs, files in os.walk(SOURCE_REPO_PATH, topdown=True):
             # Determine destination directory
             if relative_path_from_repo == '.':
                 # This is the root README.md
-                dest_path = DOCS_OUTPUT_PATH / 'index.md'
+                dest_path = DOCS_SOURCE_PATH / 'index.md'
             else:
-                dest_dir = DOCS_OUTPUT_PATH / relative_path_from_repo
+                dest_dir = DOCS_SOURCE_PATH / relative_path_from_repo
                 dest_dir.mkdir(parents=True, exist_ok=True)
                 dest_path = dest_dir / 'index.md'
 
@@ -53,7 +53,7 @@ for root_str, dirs, files in os.walk(SOURCE_REPO_PATH, topdown=True):
             copied_markdown_files.append((dest_path, relative_path_from_repo))
         elif not file.lower().endswith('.md'):
             # This is a potential asset file (image, etc.)
-            dest_dir = DOCS_OUTPUT_PATH / relative_path_from_repo
+            dest_dir = DOCS_SOURCE_PATH / relative_path_from_repo
             dest_dir.mkdir(parents=True, exist_ok=True)
             dest_path = dest_dir / file
             print(f"Copying asset '{source_path}' to '{dest_path}'")
