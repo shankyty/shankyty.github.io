@@ -2,7 +2,7 @@
 site_name: Notes
 site_url: https://shankyty.github.io/
 site_description: Notes
-site_dir: ../docs
+site_dir: ../
 
 theme:
   name: material
