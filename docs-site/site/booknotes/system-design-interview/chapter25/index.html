@@ -1,0 +1,1668 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://example.com/booknotes/system-design-interview/chapter25/">
+      
+      
+        <link rel="prev" href="../chapter24/">
+      
+      
+        <link rel="next" href="../chapter26/">
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.19">
+    
+    
+      
+        <title>S3-like Object Storage - Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#s3-like-object-storage" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Notes" class="md-header__button md-logo" aria-label="Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              S3-like Object Storage
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Notes" class="md-nav__button md-logo" aria-label="Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Welcome to My Notes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Booknotes
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Booknotes
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    System design
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            System design
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    System Design
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1_2" id="__nav_2_1_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Understanding distributed systems
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            Understanding distributed systems
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-design/understanding-distributed-systems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Index
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-design/understanding-distributed-systems/part00/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-design/understanding-distributed-systems/part01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Communication
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-design/understanding-distributed-systems/part02/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Coordination
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-design/understanding-distributed-systems/part03/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Scalability
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-design/understanding-distributed-systems/part04/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Resiliency
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-design/understanding-distributed-systems/part05/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Maintainability
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    System design interview
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            System design interview
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    System Design Interview - An Insider's Guide (vol 1 &amp; 2)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter02/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Scale From Zero to Millions of Users
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter03/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Back-of-the-envelope Estimation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter04/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    A Framework for System Design Interviews
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter05/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Rate Limiter
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter06/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design Consistent Hashing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter07/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Key-Value Store
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Unique ID Generator in Distributed Systems
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter09/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a URL Shortener
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Web Crawler
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter11/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Notification System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter12/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a News Feed System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter13/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Chat System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design A Search Autocomplete System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design YouTube
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter16/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design Google Drive
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter17/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Proximity Service
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter18/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Nearby Friends
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter19/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Google Maps
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter20/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Distributed Message Queue
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter21/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Metrics Monitoring and Alerting System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter22/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Ad Click Event Aggregation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter23/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hotel Reservation System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter24/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Distributed Email Service
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    S3-like Object Storage
+    
+  </span>
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter26/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Real-time Gaming Leaderboard
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter27/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Payment System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter28/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Digital Wallet
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter29/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Stock Exchange
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="s3-like-object-storage">S3-like Object Storage</h1>
+<p>In this chapter, we'll be designing an object storage service, similar to Amazon S3.</p>
+<p>Storage systems fall into three broad categories:
+ * Block storage
+ * File storage
+ * Object storage</p>
+<p>Block storage are devices, which came out in 1960s. HDDs and SSDs are such examples.
+These devices are typically physically attached to a server, although they can also be network-attached via high-speed network protocols.
+Servers can format the raw blocks and use them as a file system or it can hand control of them to servers directly.</p>
+<p>File storage is built on top of block storage. It provides a higher level of abstraction, making it easier to manage folders and files.</p>
+<p>Object storage sacrifices performance for high durability, vast scale and low cost.
+It targets "cold" data and is mainly used for archival and backup.
+There is no hierarchical directory structure, all data is stored as objects in a flat structure.
+It is relatively slow compared to other storage types. Most cloud providers have an object storage offering - Amazon S3, Google GCS, etc.
+<img alt="storage-comparison" src="images/storage-comparison.png" /></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Block Storage</th>
+<th>File Storage</th>
+<th>Object Storage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mutable Content</td>
+<td>Y</td>
+<td>Y</td>
+<td>N (has object versioning）</td>
+</tr>
+<tr>
+<td>Cost</td>
+<td>High</td>
+<td>Medium to high</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>Performance</td>
+<td>Medium to high, very high</td>
+<td>Medium to high</td>
+<td>Low to medium</td>
+</tr>
+<tr>
+<td>Consistency</td>
+<td>Strong consistency</td>
+<td>Strong consistency</td>
+<td>Strong consistency [5]</td>
+</tr>
+<tr>
+<td>Data access</td>
+<td>SAS/iSCSI/FC</td>
+<td>Standard file access, CIFS/SMB, and NFS</td>
+<td>RESTful API</td>
+</tr>
+<tr>
+<td>Scalability</td>
+<td>Medium scalability</td>
+<td>High scalability</td>
+<td>Vast scalability</td>
+</tr>
+<tr>
+<td>Good for</td>
+<td>Virtual machines (VM), databases</td>
+<td>General-purpose file system access</td>
+<td>Binary data, unstructured data</td>
+</tr>
+</tbody>
+</table>
+<p>Some terminology, related to object storage:
+ * Bucket - logical container for objects. Name is globally unique.
+ * Object - An individual piece of data, stored in a bucket. Contains object data and metadata.
+ * Versioning - A feature keeping multiple variants of an object in the same bucket.
+ * Uniform Resource Identifier (URI) - each resource is uniquely identified by a URI.
+ * Service-level Agreement (SLA) - contract between service provider and client. </p>
+<p>Amazon S3 Standard-Infrequent Access storage class SLAs:
+ * Durability of 99.999999999% across multiple Availability Zones
+ * Data is resilient in the event of entire Availability Zone being destroyed
+ * Designed for 99.9% availability</p>
+<h1 id="step-1-understand-the-problem-and-establish-design-scope">Step 1 - Understand the Problem and Establish Design Scope</h1>
+<ul>
+<li>C: Which features should be included?</li>
+<li>I: Bucket creation, Object upload/download, versioning, Listing objects in a bucket</li>
+<li>C: What is the typical data size?</li>
+<li>I: We need to store both massive objects and small objects efficiently</li>
+<li>C: How much data do we store in a year?</li>
+<li>I: 100 petabytes</li>
+<li>C: Can we assume 6 nines of data durbility (99.9999%) and service availability of 4 nines (99.99%)?</li>
+<li>I: Yes, sounds reasonable</li>
+</ul>
+<h2 id="non-functional-requirements">Non-functional requirements</h2>
+<ul>
+<li>100 PB of data</li>
+<li>6 nines of data durability</li>
+<li>4 nines of service availability</li>
+<li>Storage efficiency. Reduce storage cost while maintaining high reliability and performance</li>
+</ul>
+<h2 id="back-of-the-envelope-estimation">Back-of-the-envelope estimation</h2>
+<p>Object storage is likely to have bottlenecks in disk capacity or IO per second (IOPS).</p>
+<p>Assumptions:
+ * we have 20% small (less than 1mb), 60% mid-size (1-64mb) and 20% large objects (greater than 64mb),
+ * One hard disk (SATA, 7200rpm) is capable of doing 100-150 random seeks per second (100-150 IOPS)</p>
+<p>Given the assumptions, we can estimate the total number of objects the system can persist.
+ * Let's use median size per object type to simplify calculation - 0.5mb for small, 32mb for medium, 200mb for large.
+ * Given 100PB of storage (10^11 MB) and 40% of storage usage results in 0.68bil objects
+ * If we assume metadata is 1kb, then we need 0.68tb space to store metadata info</p>
+<h1 id="step-2-propose-high-level-design-and-get-buy-in">Step 2 - Propose High-Level Design and Get Buy-In</h1>
+<p>Let's explore some interesting properties of object storage before diving into the design:
+ * Object immutability - objects in object storage are immutable (not the case in other storage systems). We may delete them or replace them, but no update.
+ * Key-value store - an object URI is its key and we can get its contents by making an HTTP call
+ * Write once, read many times - data access pattern is writing once and reading many times. According to some Linkedin research, 95% of operations are reads
+ * Support both small and large objects</p>
+<p>Design philosophy of object storage is similar to UNIX - when we save a file, it creates the filename in a data structure, called inode and file data is stored in different disk locations.
+The inode contains a list of file block pointers, which point to different locations on disk. </p>
+<p>When accessing a file, we first fetch its metadata from the inode, prior to fetching the file contents.</p>
+<p>Object storage works similarly - metadata store is used for file information, but contents are stored on disk:
+<img alt="object-store-vs-unix" src="images/object-store-vs-unix.png" /></p>
+<p>By separating metadata from file contents, we can scale the different stores independently:
+<img alt="bucket-and-object" src="images/bucket-and-object.png" /></p>
+<h2 id="high-level-design">High-level design</h2>
+<p><img alt="high-level-design" src="images/high-level-design.png" />
+ * Load balancer - distributes API requests across service replicas
+ * API service - Stateless server, orchestrating calls to metadata and object store, as well as IAM service.
+ * Identity and access management (IAM) - central place for auth, authz, access control.
+ * Data store - stores and retrieves actual data. Operations are based on object ID (UUID).
+ * Metadata store - stores object metadata</p>
+<h2 id="uploading-an-object">Uploading an object</h2>
+<p><img alt="uploading-object" src="images/uploading-object.png" />
+ * Create a bucket named "bucket-to-share" via HTTP PUT request
+ * API service calls IAM to ensure user is authorized and has write permissions
+ * API service calls metadata store to create a bucket entry. Once created, success response is returned.
+ * After bucket is created, HTTP PUT is sent to create an object named "script.txt"
+ * API service verifies user identity and ensures user has write permissions
+ * Once validation passes, object payload is sent via HTTP PUT to the data store. Data store persists it and returns a UUID.
+ * API service calls metadata store to create a new entry with object_id, bucket_id and bucket_name, among other metadata.</p>
+<p>Example object upload request:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>PUT /bucket-to-share/script.txt HTTP/1.1
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Host: foo.s3example.org
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Date: Sun, 12 Sept 2021 17:51:00 GMT
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Authorization: authorization string
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>Content-Type: text/plain
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>Content-Length: 4567
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>x-amz-meta-author: Alex
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>[4567 bytes of object data]
+</code></pre></div></p>
+<h2 id="downloading-an-object">Downloading an object</h2>
+<p>Buckets have no directory hierarchy, buy we can create a logical hierarchy by concatenating bucket name and object name to simulate a folder structure.</p>
+<p>Example GET request for fetching an object:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>GET /bucket-to-share/script.txt HTTP/1.1
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Host: foo.s3example.org
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Date: Sun, 12 Sept 2021 18:30:01 GMT
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>Authorization: authorization string
+</code></pre></div></p>
+<p><img alt="download-object" src="images/download-object.png" />
+ * Client sends an HTTP GET request to the load balancer, ie <code>GET /bucket-to-share/script.txt</code>
+ * API service queries IAM to verify the user has correct permissions to read the bucket
+ * Once validated, UUID of object is retrieved from metadata store
+ * Object payload is retrieved from data store based on UUID and returned to the client</p>
+<p>// sprint 1</p>
+<h1 id="step-3-design-deep-dive">Step 3 - Design Deep Dive</h1>
+<h2 id="data-store">Data store</h2>
+<p>Here's how the API service interacts with the data store:
+<img alt="data-store-interactions" src="images/data-store-interactions.png" /></p>
+<p>The data store's main components:
+<img alt="data-store-main-components" src="images/data-store-main-components.png" /></p>
+<p>The data routing service provides a RESTful or gRPC API to access the data node cluster.
+It is a stateless service, which scales by adding more servers.</p>
+<p>It's main responsibilities are:
+ * querying the placement service to get the best data node to store data
+ * reading data from data nodes and returning it to the API service
+ * Writing data to data nodes</p>
+<p>The placement service determines which data nodes should store an object.
+It maintains a virtual cluster map, which determines the physical topology of a cluster.
+<img alt="virtual-cluster-map" src="images/virtual-cluster-map.png" /></p>
+<p>The service also sends heartbeats to all data nodes to determine if they should be removed from the virtual cluster.</p>
+<p>Since this is a critical service, it is recommended to maintain a cluster of 5 or 7 replicas, synchronized via Paxos or Raft consensus algorithms.
+Eg a 7 node cluster can tolerate 3 nodes failing.</p>
+<p>Data nodes store the actual object data.
+Reliability and durability is ensured by replicating data to multiple data nodes.</p>
+<p>Each data node has a daemon running, which sends heartbeats to the placement service.</p>
+<p>The heartbeat includes:
+ * How many disk drives (HDD or SSD) does the data node manage?
+ * How much data is stored on each drive?</p>
+<h3 id="data-persistence-flow">Data persistence flow</h3>
+<p><img alt="data-persistence-flow" src="images/data-persistence-flow.png" />
+ * API service forwards the object data to data store
+ * Data routing service sends the data to the primary data node
+ * Primary data node saves the data locally and replicates it to two secondary data nodes. Response is sent after successful replication.
+ * The UUID of the object is returned to the API service.</p>
+<p>Caveats:
+ * Given an object UUID, it's replication group is deterministically chosen by using consistent hashing
+ * In step 4, the primary data node replicates the object data before returning a response. This favors strong consistency over higher latency.
+<img alt="consistency-vs-latency" src="images/consistency-vs-latency.png" /></p>
+<h3 id="how-data-is-organized">How data is organized</h3>
+<p>One simple approach to managing data is to store each object in a separate file. </p>
+<p>This works, but is not performant with many small files in a file system:
+ * Data blocks on HDD are wasted, because every file uses the whole block size. Typical block size is 4kb.
+ * Many files means many inodes. Operating systems don't deal well with too many inodes and there is also a max inode limit.</p>
+<p>These issues can be addressed by merging many small files into bigger ones via a write-ahead log (WAL). Once the file reaches its capacity (typically a few GB), a new file is created:
+<img alt="wal-optimization" src="images/wal-optimization.png" /></p>
+<p>The downside of this approach is that write access to the file needs to be serialized. Multiple cores accessing the same file must wait for each other.
+To fix this, we can confine files to specific cores to avoid lock contention.</p>
+<h3 id="object-lookup">Object lookup</h3>
+<p>To support storing multiple objects in the same file, we need to maintain a table, which tells the data node:
+ * <code>object_id</code>
+ * <code>filename</code> where object is stored
+ * <code>file_offset</code> where object starts
+ * <code>object_size</code></p>
+<p>We can deploy this table in a file-based db like RocksDB or a traditional relational database.
+Since the access pattern is low write+high read, a relational database works better.</p>
+<p>How should we deploy it?
+We could deploy the db and scale it separately in a cluster, accessed by all data nodes.</p>
+<p>Downsides:
+ * we'd need to aggressively scale the cluster to serve all requests
+ * there's additional network latency between data node and db cluster</p>
+<p>An alternative is to take advantage of the fact that data nodes are only interested to data related to them, 
+so we can deploy the relational db within the data node itself. </p>
+<p>SQLite is a good option as it's a lightweight file-based relational database.</p>
+<h3 id="updated-data-persistence-flow">Updated data persistence flow</h3>
+<p><img alt="updated-data-persistence-flow" src="images/updated-data-persistence-flow.png" />
+ * API Service sends a request to save a new object
+ * Data node service appends the new object at the end of a file, named "/data/c"
+ * A new record for the object is inserted into the object mapping table</p>
+<h3 id="durability">Durability</h3>
+<p>Data durability is an important requirement in our design. In order to achieve 6 nines of durability, every failure case needs to be properly examined.</p>
+<p>First problem to address is hardware failures. We can achieve that by replicating data nodes to minimize probability of failure.
+But in addition to that, we also ought to replicate across different failure domains (cross-rack, cross-dc, separate networks, etc). 
+A critical event can cause multiple hardware failures within the same domain:
+<img alt="failure-domain-isolation" src="images/failure-domain-isolation.png" /></p>
+<p>Assuming annual failure rate of a typical HDD is 0.81%, making three copies gives us 6 nines of durability.</p>
+<p>Replicating the data nodes like that grants us the durability we want, but we could also leverage erasure coding to reduce storage costs.</p>
+<p>Erasure coding enables us to use parity bits, which allow us to reconstruct lost bits in the event of a failure:
+<img alt="erasure-coding" src="images/erasure-coding.png" /></p>
+<p>Imagine those bits are data nodes. If two of them go down, they can be recovered using the remaining four ones.</p>
+<p>There are different erasure coding schemes. In our case, we could use 8+4 erasure coding, split across different failure domains to maximize reliability:
+<img alt="erasure-coding-across-failure-domains" src="images/erasure-coding-across-failure-domains.png" /></p>
+<p>Erasure coding enables us to achieve a much lower storage cost (50% improvement) at the expense of access speed due to the data routing service having to collect data from multiple locations:
+<img alt="erasure-coding-vs-replication" src="images/erasure-coding-vs-replication.png" /></p>
+<p>Other caveats:
+ * Replication requires 200% storage overhead (in case of 3 replicas) vs. 50% via erasure coding
+ * Erasure coding <a href="https://github.com/Backblaze/erasure-coding-durability">gives us 11 nines of durability</a> vs 6 nines via replication
+ * Erasure coding requires more computation to calculate and store parities</p>
+<p>In sum, replication is more useful for latency-sensitive applications, whereas erasure coding is attractive for storage cost efficiency and durability.
+Erasure coding is also much harder to implement.</p>
+<h3 id="correctness-verification">Correctness verification</h3>
+<p>If a disk fails entirely, then the failure is easy to detect. This is less straightforward in the event part of the disk memory gets corrupted.</p>
+<p>To detect this, we can use checksums - a hash of the file contents, which can be used to verify the file's integrity.</p>
+<p>In our case, we'll store checksums for each file and each object:
+<img alt="checksums-for-correctness" src="images/checksums-for-correctness.png" /></p>
+<p>In the case of erasure coding (8+4), we'll need to fetch each of the 8 pieces of data separately and verify each of their checksums.</p>
+<p>// sprint 2</p>
+<h2 id="metadata-data-model">Metadata data model</h2>
+<p>Table schemas:
+<img alt="metadata-data-model" src="images/metadata-data-model.png" /></p>
+<p>Queries we need to support:
+ * Find an object ID by name
+ * Insert/delete object based on name
+ * List objects in a bucket sharing the same prefix</p>
+<p>There is usually a limit on the number of buckets a user can create, hence, the size of the buckets table is small and can fit into a single db server.
+But we still need to scale the server for read throughput.</p>
+<p>The object table will probably not fit into a single database server, though. Hence, we can scale the table via sharding:
+ * Sharding by bucket_id will lead to hotspot issues as a bucket can have billions of objects
+ * Sharding by bucket_id makes the load more evenly distributed, but our queries will be slow
+ * We choose sharding by <code>hash(bucket_name, object_name)</code> since most queries are based on the object/bucket name.</p>
+<p>Even with this sharding scheme, though, listing objects in a bucket will be slow.</p>
+<h2 id="listing-objects-in-a-bucket">Listing objects in a bucket</h2>
+<p>In a single database, listing an object based on its prefix (looks like a directory) works like this:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>SELECT * FROM object WHERE bucket_id = &quot;123&quot; AND object_name LIKE `abc/%`
+</code></pre></div></p>
+<p>This is challenging to fulfill when the database is sharded. To achieve it, we can run the query on every shard and aggregate the results in-memory.
+This makes pagination challenging though, since different shards contain a different result size and we need to maintain separate limit/offset for each.</p>
+<p>We can leverage the fact that typically object stores are not optimized for listing objects, so we can sacrifice listing performance.
+We can also create a denormalized table for listing objects, sharded by bucket ID. 
+That would make our listing query sufficiently fast as it's isolated to a single database instance.</p>
+<h2 id="object-versioning">Object versioning</h2>
+<p>Versioning works by having another <code>object_version</code> column which is of type TIMEUUID, enabling us to sort records based on it.</p>
+<p>Each new version produces a new <code>object_id</code>:
+<img alt="object-versioning" src="images/object-versioning.png" /></p>
+<p>Deleting an object creates a new version with a special <code>object_id</code> indicating that the object was deleted. Queries for it return 404:
+<img alt="deleting-versioned-object" src="images/deleting-versioned-object.png" /></p>
+<h2 id="optimizing-uploads-of-large-files">Optimizing uploads of large files</h2>
+<p>Uploading large files can be optimized by using multipart uploads - splitting a big file into several chunks, uploaded independently:
+<img alt="multipart-upload" src="images/multipart-upload.png" />
+ * Client calls service to initiate a multipart upload
+ * Data store returns an upload ID which uniquely identifies the upload
+ * Client splits the large file into several chunks, uploaded independently using the upload id
+ * When a chunk is uploaded, the data store returns an etag, which is a md5 checksum, identifying that upload chunk
+ * After all parts are uploaded, client sends a complete multipart upload request, which includes upload_id, part numbers and all etags
+ * Data store reassembles the object from its parts. The process can take a few minutes. After that, success response is returned to the client.</p>
+<p>Old parts, which are no longer useful can be removed at this point. We can introduce a garbage collector to deal with it.</p>
+<h2 id="garbage-collection">Garbage collection</h2>
+<p>Garbage collection is the process of reclaiming storage space, which is no longer used. There are a few ways data becomes garbage:
+ * lazy object deletion - object is marked as deleted without actually getting deleted
+ * orphan data - eg an upload failed mid-flight and old parts need to be deleted
+ * corrupted data - data which failed checksum verification</p>
+<p>The garbage collector is also responsible for reclaiming unused space in replicas. 
+With replication, data is deleted from both primaries and replicas. With erasure coding (8+4), data is deleted from all 12 nodes.</p>
+<p>To facilitate the deletion, we'll use a process called compaction:
+ * Garbage collector copies objects which are not deleted from "data/b" to "data/d"
+ * <code>object_mapping</code> table is updated once copying is complete using a database transaction
+ * To avoid making too many small files, compaction is done on files which grow beyond a certain threshold
+<img alt="compaction" src="images/compaction.png" /></p>
+<h1 id="step-4-wrap-up">Step 4 - Wrap Up</h1>
+<p>Things we covered:
+ * Designing an S3-like object storage
+ * Comparing differences between object, block and file storages
+ * Covered uploading, downloading, listing, versioning of objects in a bucket
+ * Deep dived in the design - data store and metadata store, replication and erasure coding, multipart uploads, sharding</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>

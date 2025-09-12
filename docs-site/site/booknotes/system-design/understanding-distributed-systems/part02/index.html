@@ -1,0 +1,1898 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://example.com/booknotes/system-design/understanding-distributed-systems/part02/">
+      
+      
+        <link rel="prev" href="../part01/">
+      
+      
+        <link rel="next" href="../part03/">
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.19">
+    
+    
+      
+        <title>Coordination - Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#coordination" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="Notes" class="md-header__button md-logo" aria-label="Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Coordination
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="Notes" class="md-nav__button md-logo" aria-label="Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Welcome to My Notes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Booknotes
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Booknotes
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    System design
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            System design
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    System Design
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_1_2" id="__nav_2_1_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Understanding distributed systems
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_1_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            Understanding distributed systems
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Index
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part00/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Communication
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Coordination
+    
+  </span>
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part03/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Scalability
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part04/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Resiliency
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part05/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Maintainability
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    System design interview
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            System design interview
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    System Design Interview - An Insider's Guide (vol 1 &amp; 2)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter02/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Scale From Zero to Millions of Users
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter03/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Back-of-the-envelope Estimation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter04/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    A Framework for System Design Interviews
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter05/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Rate Limiter
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter06/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design Consistent Hashing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter07/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Key-Value Store
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Unique ID Generator in Distributed Systems
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter09/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a URL Shortener
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Web Crawler
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter11/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Notification System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter12/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a News Feed System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter13/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Chat System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design A Search Autocomplete System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design YouTube
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter16/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design Google Drive
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter17/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Proximity Service
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter18/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Nearby Friends
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter19/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Google Maps
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter20/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Distributed Message Queue
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter21/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Metrics Monitoring and Alerting System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter22/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Ad Click Event Aggregation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter23/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hotel Reservation System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter24/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Distributed Email Service
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter25/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    S3-like Object Storage
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter26/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Real-time Gaming Leaderboard
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter27/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Payment System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter28/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Digital Wallet
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system-design-interview/chapter29/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Stock Exchange
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="coordination">Coordination</h1>
+<ul>
+<li><a href="#system-models">System Models</a></li>
+<li><a href="#failure-detection">Failure Detection</a></li>
+<li><a href="#time">Time</a></li>
+<li><a href="#leader-election">Leader Election</a></li>
+<li><a href="#replication">Replication</a></li>
+<li><a href="#coordination-avoidance">Coordination avoidance</a></li>
+<li><a href="#transactions">Transactions</a></li>
+<li><a href="#asynchronous-transactions">Asynchronous transactions</a></li>
+<li><a href="#summary">Summary</a></li>
+</ul>
+<p>So far, focus is on making nodes communicate. Focus now is to make nodes coordinate as if they're a single coherent system.</p>
+<h1 id="system-models">System Models</h1>
+<p>To reason about distributed systems, we must strictly define what can and cannot happen.</p>
+<p>A system model is a set of assumptions about the behavior of processes, communication links and timing while abstracting away the complexities of the technology being used.</p>
+<p>Some common models for communication links:
+ * fair-loss link - messages may be lost and duplicated, but if sender keeps retransmitting messages, they will eventually be delivered.
+ * reliable link - messages are delivered exactly once without loss or duplication. Reliable links can be implemented on top of fair-loss links by deduplicating messages at receiving end.
+ * authenticated reliable link - same as reliable link but also assumes the receiver can authenticate the sender.</p>
+<p>Although these models are abstractions of real communication links, they are useful to verify the correctness of algorithms.</p>
+<p>We can also model process behavior based on the types of failures we can expect:
+ * arbitrary-fault model - aka "Byzantine" model, the process can deviate from algorithm in unexpected ways, leading to crashes due to bugs or malicious activity.
+ * crash-recovery model - process doesn't deviate from algorithm, but can crash and restart at any time, losing its in-memory state.
+ * crash-stop model - process doesn't deviate from algorithm, it can crash and when it does, it doesn't come back online. Used to model unrecoverable hardware faults.</p>
+<p>The arbitrary-fault model is used to describe systems which are safety-criticla or not in full control of all the processes - airplanes, nuclear power plants, the bitcoin digital currency.</p>
+<p>This model is out of scope for the book. Algorithms presented mainly focus on the crash-recovery model.</p>
+<p>Finally, we can model timing assumptions:
+ * synchronous model - sending a message or executing an operation never takes more than a certain amount of time. Not realistic for the kinds of systems we're interested in.
+    * Sending messages over the network can take an indefinite amount of time. Processes can also be slowed down by garbage collection cycles.
+ * asynchronous model - sending a message or executing an operation can take an indefinite amount of time.
+ * partially synchronous model - system behaves synchronously most of the time. Typically representative enough of real-world systems.</p>
+<p>Throughout the book, we'll assume a system model with fair-loss links, crash-recovery processes and partial synchrony.</p>
+<h1 id="failure-detection">Failure Detection</h1>
+<p>When a client sends a request to a server &amp; doesn't get a reply back, what's wrong with the server?</p>
+<p>One can't tell, it might be:
+ * server is very slow
+ * it crashed
+ * there's a network issue</p>
+<p>Worst case, client will wait forever until they get a response back. Possible mitigation is to setup timeout, back-off and retry.
+<img alt="failure-detection" src="images/failure-detection.png" /></p>
+<p>However, a client need not wait until they have to send a message to figure out that the server is down. They can maintain a list of available processes which they ping or heartbeat to figure out if they're alive:
+ * ping - periodic request from client to server to check if process is available.
+ * heartbeat - periodic request from server to client to indicate that server is still alive.</p>
+<p>Pings and heartbeats are used in situations where processes communicate with each other frequently, eg within a microservice deployment.</p>
+<h1 id="time">Time</h1>
+<p>Time is critical in distributed systems:
+ * On the network layer for DNS TTL records
+ * For failure detection via timeouts
+ * For determining ordering of events in a distributed system</p>
+<p>The last use-case is one we're to tackle in the chapter. </p>
+<p>The challenge with that is that in distributed systems, there is no single global clock all services agree on unlike a single-threaded application where events happen sequentially.</p>
+<p>We'll be exploring a family of clocks which work out the order of operations in a distributed system.</p>
+<h2 id="physical-clocks">Physical Clocks</h2>
+<p>Processes have access to a physical wall-time clock. Every machine has one. The most common one is based on a vibrating quartz crystal, which is cheap but not insanely accurate.</p>
+<p>Because quartz clocks are not accurate, they need to be occasionally synced with servers with high-accuracy clocks.</p>
+<p>These kinds of servers are equipped with atomic clocks, which are based on quantum mechanics. They are accurate up to 1s in 3 mil years.</p>
+<p>Most common protocol for time synchronization is the Network Time Protocol (NTP).</p>
+<p>Clients synchronize their clock via this protocol, which also factors in the network latency. The problem with this approach is that the clock can go back in time on the origin machine.</p>
+<p>This can lead to a situation where operation A which happens after operation B has a smaller timestamp.</p>
+<p>An alternative is to use a clock, provided by most OS-es - monotonic clock. It's a forward-only moving clock which measures time elapsed since a given event (eg boot up).</p>
+<p>This is useful for measuring time elapsed between timestamps on the same machine, but not for timestamps across multiple ones.</p>
+<h2 id="logical-clocks">Logical Clocks</h2>
+<p>Logical clocks measure passing of time in terms of logical operations, not wall-clock time.</p>
+<p>Example - counter, incremented on each operation. This works fine on single machines, but what if there are multiple machines.</p>
+<p>A Lamport clock is an enhanced version where each message sent across machines includes the logical clock's counter. Receiving machines take into consideration the counter of the message they receive.</p>
+<p>Subsequent operations are timestamped with a counter bigger than the one they received.
+<img alt="lamport-clock" src="images/lamport-clock.png" /></p>
+<p>With this approach, dependent operations will have different timestamps, but unrelated ones can have identical ones.</p>
+<p>To break ties, the process ID can be included as a second ordering factor.</p>
+<p>Regardless of this, logical clocks don't imply a causal relationship. It is possible for event A to happen before B even if B's timestamp is greater.</p>
+<h2 id="vector-clocks">Vector Clocks</h2>
+<p>Vector clocks are logical clocks with the additional property of guaranteeing that event A happened before event B if A's timestamp is smaller than B.</p>
+<p>Vector clocks have an array of counters, one for each process in the system:
+ * Counters start from 0
+ * When an operation occurs, the process increments its process' counter by 1
+ * Sending a message increments the process' counter by 1. The array is included in the message
+ * Receiving process merges the received array with its local one by taking the max for each element.
+   * Finally, its process counter is incremented by 1 </p>
+<p>This guarantees that event A happened before B if:
+ * Every counter in A is <code>less than or equal</code> every counter in B
+ * At least one counter in A is <code>less than</code> corresponding counter in B </p>
+<p>If neither A happened before B nor B happened before A, the operations are considered concurrent
+<img alt="vector-clock" src="images/vector-clock.png" /></p>
+<p>In the above example:
+ * B happened before C
+ * E and C are concurrent</p>
+<p>A downside of vector clocks is that storage requirements grow with every new process.
+Other types of logical clocks, like <a href="https://queue.acm.org/detail.cfm?id=2917756">dotted version clocks</a> solve this issue.</p>
+<h2 id="summary">Summary</h2>
+<p>Using physical clocks for timestamp is good enough for some records such as logs.</p>
+<p>However, when you need to derive the order of events across different processes, you'll need vector clocks.</p>
+<h1 id="leader-election">Leader Election</h1>
+<p>There are use-cases where 1 among N processes needs to gain exclusive rights to accessing a shared resource or to assign work to others.</p>
+<p>To achieve this, one needs to implement a leader-election algorithm - to elect a single process to be a leader among a group of equally valid candidates.</p>
+<p>There are two properties this algorithm needs to sustain:
+ * Safety - there will always be one leader elected at a time.
+ * Liveness - the process will work correctly even in the presence of failures.</p>
+<p>This chapter explores a particular leader-election algorithm - Raft, and how it guarantees these properties.</p>
+<h2 id="raft-leader-election">Raft leader election</h2>
+<p>Every process is a state machine with one of three states:
+ * follower state - process recognizes another process as a leader
+ * candidate state - process starts a new election, proposing itself as a leader
+ * leader state - process is the leader</p>
+<p>Time is divided into election terms, numbered with consecutive integers (logical timestamp).
+A term begins with a new election - one or more candidates attempt to become the leader.</p>
+<p>When system starts up, processes begin their journey as followers. 
+As a follower, the process expects a periodic heartbeat from the leader.
+If one does not arrive, a timeout begins ticking after which the process starts a new election &amp; transitions into the candidate state.</p>
+<p>In the candidate state, the process sends a request to all other notes, asking them to vote for them as the new leader.</p>
+<p>State transition happens when:
+ * Candidate wins the election - majority of processes vote for process, hence it wins the election.
+ * Another process wins - when a leader heartbeat is received \w election term index <code>greater than or equal</code> to current one.
+ * No one wins election - due to split vote. Then, after a random timeout (to avoid consecutive split votes), a new election starts.
+<img alt="raft-state-machine" src="images/raft-state-machine.png" /></p>
+<h2 id="practical-considerations">Practical considerations</h2>
+<p>There are also other leader election algorithms but Raft is simple &amp; widely used.</p>
+<p>In practice, you would rarely implement leader election from scratch, unless you're aiming to avoid external dependencies.</p>
+<p>Instead, you can use any fault-tolerant key-value store \w support for TTL and linearizable CAS (compare-and-swap) operations.
+This means, in a nutshell, that operations are atomic &amp; there is no possibility for race conditions.</p>
+<p>However, there is a possibility for race conditions after you acquire the lease.</p>
+<p>It is possible that there is some network issue during which you lose the lease but you still think you're the leader.
+This has <a href="https://ravendb.net/articles/avoid-rolling-your-own-leader-election-algorithm">lead to big outages in the past</a></p>
+<p>As a rule of thumb, leaders should do as little work as possible &amp; we should be prepared to occasionally have more than one leaders.</p>
+<h1 id="replication">Replication</h1>
+<p>Data replication is fundamental for distributed systems.</p>
+<p>One reason for doing that is to increase availability. If data is stored on a single process and it goes down, the data is no longer available.</p>
+<p>Another reason is to scale - the more replicas there are, the more clients can be supported concurrently.</p>
+<p>The challenge of replication is to keep them consistent with one another in the event of failure.
+The chapter will explore Raft's replication algorithm which provides the strongest consistency guarantee - to clients, the data appears to be stored on a single process.</p>
+<p>Paxos is a more popular protocol but we're exploring Raft as it's simpler to understand.</p>
+<p>Raft is based on state machine replication - leader emits events for state changes &amp; all followers update their state when the event is received.</p>
+<p>As long as the followers execute the same sequence of operations as the leader, they will end up with the same state.</p>
+<p>Unfortunately, just broadcasting the event is not sufficient in the event of failures, eg network outages.</p>
+<p>Example state-machine replication with a distributed key-value store:
+ * KV store accepts operations put(k, v) and get(k)
+ * State is stored in a dictionary</p>
+<p>If every node executes the same sequence of puts, the state is consistent across all of them.</p>
+<h3 id="state-machine-replication">State machine replication</h3>
+<p>When system starts up, leader is elected using Raft's leader election algorithm, which was already discussed.</p>
+<p>State changes are persisted in an event log which is replicated to followers.
+<img alt="event-log-raft" src="images/event-log-raft.png" /></p>
+<p><strong>Note:</strong> The number in the boxes above the operation is the leader election term.</p>
+<p>The replication algorithm works as follows:
+ * Only the leader can accept state updates
+ * When it accepts an update, it is persisted in the local log, but the state is not changed
+ * The leader then sends an <code>AppendEntries</code> request to all followers \w the new entry. This is also periodically sent for the purposes of heartbeat.
+ * When a follower receives the event, it appends it to its local log, but not its state. It then sends an acknowledge message back to leader.
+ * Once leader receives enough confirmations to form a quorum (&gt;50% acks from nodes), the state change is persisted to local state.
+ * Followers also persist the state change on a subsequent <code>AppendEntries</code> request which indicates that the state is changed.</p>
+<p>Such a system can tolerate F failures where total nodes = 2F + 1.</p>
+<p>What if a failure happens?</p>
+<p>If the leader dies, an election occurs. However, what if a follower with less up-to-date log becomes a leader? To avoid this, a node can't vote for another candidate if the candidate's log is less up-to-date.</p>
+<p>What if a follower dies &amp; comes back alive afterwards?
+ * They will update their log after receiving an <code>AppendEntries</code> message from leader. That message also contains the index of the second to last log.
+ * If the record is already present in the log, the follower ignores the message.
+ * If the record is not present but the second to last log entry is, the new entry is appended.
+ * If neither are present, the message is rejected.
+ * When the message is rejected, the leader sends the last two messages. If those are also rejected, the last three are sent and so forth.
+ * Eventually, the follower will receive all log entries they've missed and make their state up-to-date.</p>
+<h2 id="consensus">Consensus</h2>
+<p>Solving state machine replication lead us to discover a solution to an important distributed systems problem - achieving consensus among a group of nodes.</p>
+<p>Consensus definition:
+ * every non-faulty process eventually agrees on a value
+ * the final decision of non-faulty processes is the same everywhere
+ * the value that has been agreed on has been proposed by a process</p>
+<p>Consensus use-case example - agreeing on which process in a group gets to acquire a lease.
+This is useful in a leader-election scenario.</p>
+<p>Realistically, you won't implement consensus yourself. You'll use an off-the-shelf solution. That, however, needs to be fault-tolerant.</p>
+<p>Two widely used options are etcd and zookeeper. These data stores replicate their state for fault-tolerance.</p>
+<p>To implement acquiring a lease, clients can attempt to create a key \w a specific TTL in the key-value store. 
+Clients can also subscribe to state changes, allowing them to reacquire the lease if the leader dies.</p>
+<h2 id="consistency-models">Consistency models</h2>
+<p>Let's take a closer look at what happens when a client sends a request to a replicated data store.</p>
+<p>Ideally, writes are instant:
+<img alt="instant-write" src="images/instant-write.png" /></p>
+<p>In reality, writes take some time:
+<img alt="non-instant-write" src="images/non-instant-write.png" /></p>
+<p>In a replicated data store, writes need to go through the leader, but what about reads?
+ * If reads are only served by the leader, then clients will always get the latest state, but throughput is limited
+ * If reads are served by leaders and followers, throughput if higher, but two clients can get different views of the system, in case a follower is lagging behind the leader.</p>
+<p>Consistency models help define the trade-off between consistency and performance.</p>
+<h3 id="strong-consistency">Strong Consistency</h3>
+<p>If all reads and writes go through the leader, this can guarantee that all observers will see the write after it's persisted.
+<img alt="strong-consistency" src="images/strong-consistency.png" /></p>
+<p>This is a <code>strong consistency</code> model.</p>
+<p>One caveat is that a leader can't instantly confirm a write is complete after receiving it. It must first confirm that they're still the leader by sending a request to all followers.
+This adds up to the time required to serve a read.</p>
+<h3 id="sequential-consistency">Sequential consistency</h3>
+<p>Serializing all reads through the leader guarantees strong consistency but limits throughput.</p>
+<p>An alternative is to enable followers to serve reads and <code>attach clients to particular followers</code>. 
+This will lead to an issue where different clients can see a different state, but operations will always occur in the same order.
+<img alt="sequential-consistency" src="images/sequential-consistency.png" /></p>
+<p>This is a <code>sequential consistency</code> model.</p>
+<p>Example implementation is a producer/consumer system synchronized with a queue. Producers and consumers always see the events in the same order, but at different times.</p>
+<h3 id="eventual-consistency">Eventual consistency</h3>
+<p>In the sequential consistency model, we had to attach clients to particular clients to guarantee in-order state changes.
+This will be an issue, however, when the follower a client is pinned to is down. The client will have to wait until the follower is back up.</p>
+<p>An alternative is to allow clients to use any follower.</p>
+<p>This comes at a consistency price. If follower B is lagging behind follower A and a client first queries follower A and then follower B, they will receive an earlier version of the state.</p>
+<p>The only guarantee a client has is that it will eventually see the latest state. This consistency model is referred to as <code>eventual consistency</code>.</p>
+<p>Using an eventually consistent system can lead to subtle bugs, which are hard to debug. However, not all applications need a strongly consistent system.
+If you're eg tracking the number of views on a youtube video, it doesn't matter if you display it wrong by a few users more or less.</p>
+<h3 id="the-cap-theorem">The CAP Theorem</h3>
+<p>When a network partition occurs - ie parts of the system become disconnected, the system has two choices:
+ * Remain highly available by allowing clients to query followers &amp; sacrifice strong consistency.
+ * Guarantee strong consistency by declining reads that can't reach the leader.</p>
+<p>This dilemma is summarized by the CAP theorem - "strong consistency, availability and fault-tolerance. You can only pick two."</p>
+<p>In reality, the choice is only among strong consistency and availability as network faults will always happen.
+Additionally, consistency and availability are not binary choices. They're a spectrum. </p>
+<p>Also, even though network partitions can happen, they're usually rare. 
+But even without them, there is a trade-off between consistency and latency - The stronger the consistency is, the higher the latency is.</p>
+<p>This relationship is expressed by the PACELC theorem:
+ * In case of partition (P), one has to choose between availability (A) and consistency (C).
+ * Else (E), one has to choose between latency (L) and consistency (C).</p>
+<p>Similar to CAP, the choices are a spectrum, not binary.</p>
+<p>Due to these considerations, there are data stores which come with counter-intuitive consistency guarantees in order to provide strong availability and performance.
+Others allow you to configure how consistent you want them to be - eg Amazon's Cosmos DB and Cassandra.</p>
+<p>Taken from another angle, PACELC implies that there is a trade-off between the required coordination and performance.
+One way to design around this is to move coordination away from the critical path.</p>
+<h2 id="chain-replication">Chain Replication</h2>
+<p>Chain replication is a different kettle of fish, compared to leader-based replication protocols such as Raft.
+ * With this scheme, processes are arranged in a chain. Leftmost process is the head, rightmost one is the tail.
+ * Clients send writes to the head, it makes the state change and forwards to the next node
+ * Next node persists &amp; forwards it to the next one. This continues until the tail is reached.
+ * After the state update reaches the tail, it acknowledges the receipt back to the previous node. It then acknowledges receipt to previous one and so forth.
+ * Finally, the head receives the confirmation and informs the client that the write is successful.</p>
+<p>Writes go exclusively through the head. Reads, on the other hand, are served exclusively by the tail.
+<img alt="chain-replication" src="images/chain-replication.png" /></p>
+<p>In the absence of failures, this is a strongly-consistent model. What happens in the event of a failure?</p>
+<p>Fault-tolerance is dedicated to a separate component, called the control plane. It is replicated (to enable strong consistency) and can eg use Raft for consensus.</p>
+<p>The control plane monitors the system's health and reacts when a node dies:
+ * If head fails, a new head is appointed and clients are notified of the change.
+   * If the head persisted a write without forwarding, no harm is done because client never received acknowledgment of successful write.
+ * If the tail fails, its predecessor becomes the new tail.
+   * All updates received by the tail must necessarily be acknowledged by the predecessors, so consistency is sustained.
+ * If an intermediate node dies, its predecessor is linked to its successor.
+   * To sustain consistency, the failing node's successor needs to communicate the last received change to the control plane, which is forwarded to the predecessor.</p>
+<p>Chain replication can tolerate up to N-a failures, but the control plane can tolerate only up to C/2 failures.</p>
+<p>This model is more suited for strong consistency than Raft, because read/write responsibilities are split between head and tail and the tail need not contact any other node before answering a read response.</p>
+<p>The trade-off, though, is that writes need to go through all nodes. A single slow node can slow down all the writes. In contrast, Raft doesn't require all nodes to acknowledge a write.
+In addition to that, in case of failure, writes are delayed until the control plane detects the failure &amp; mitigates it.</p>
+<p>There are a few optimizations one can do with chain replication:
+ * write requests can be pipelined - ie, multiple write requests can be in-flight, even if they are dependent on one another.
+ * read throughput can be done by other replicas as well while guaranteeing strong consistency
+   * To achieve this, replicas mark an object as dirty if a write request for it passed through them without a subsequent acknowledgment.
+   * If someone attempts to read a dirty object, the replica first consults the tail to verify if the write is committed.
+<img alt="dirty-read-chain-replication" src="images/dirty-read-chain-replication.png" /></p>
+<p>As previously discussed, leader-based replication presents a scalability issue.
+But if the consensus coordination is delegated away from the critical path, you can achieve higher throughput and consistency for data-related operations.</p>
+<p>Chain replication delegates coordination &amp; failure recovery concerns to the control plane.</p>
+<p>But can we go further? Can we achieve replication without the need for consensus? </p>
+<p>That's the next chapter's topic.</p>
+<h1 id="coordination-avoidance">Coordination avoidance</h1>
+<p>There are two main ingredients to state-machine replication:
+ * A broadcast protocol which guarantees every replica eventually receives all updates in the same order
+ * A deterministic update function for each replica</p>
+<p>Implementing fault-tolerant total order requires consensus. It is also a scalability bottleneck as it requires one process to handle updates at a time.</p>
+<p>We'll explore a form of replication which doesn't require total order but still has useful guarantees.</p>
+<h2 id="broadcast-protocols">Broadcast protocols</h2>
+<p>Network communication over wide area networks like the internet offer unicast protocols only (eg TCP).</p>
+<p>To broadcast a message to a group of receivers, a multicast protocol is needed. Hence, we need to implement a multicast protocol over a unicast one.</p>
+<p>The challenge is supporting multiple senders and receivers that can crash at any point.</p>
+<p><strong>Best-effort broadcast</strong> guarantees that a message will be deliver to all non-faulty receivers in a group.
+One way to implement it is by sending a message to all senders one by one over reliable links.
+If, however, the sender fails midway, the receiver will never get the message.
+<img alt="best-effort-broadcast" src="images/best-effort-broadcast.png" /></p>
+<p><strong>Reliable broadcast</strong> guarantees that the message is eventually delivered to all non-faulty processes even if the sender crashes before the message is fully delivered.
+One way to implement it is to make every sender that receives a message retransmit it to the rest of the group. 
+This is known as eager reliable broadcast and is costly as it takes sending the message N^2 times.
+<img alt="eager-reliable-broadcast" src="images/eager-reliable-broadcast.png" /></p>
+<p><strong>Gossip broadcast</strong> optimizes this by sending the message to a subset of nodes.
+This approach is probabilistic. It doesn't guarantee all nodes get the message, but you can minimize the probability of non-reception by tuning the config params.
+This approach is particularly useful when there are large number of nodes as deterministic protocols can't scale to such amounts.
+<img alt="gossip-broadcast" src="images/gossip-broadcast.png" /></p>
+<p>Reliable broadcast protocols guarantee messages are delivered to non-faulty processes, but they don't make ordering guarantees.
+<strong>Total order broadcast</strong> guarantees both reception &amp; order of messages, but it requires consensus, which is a scalability bottleneck.</p>
+<h2 id="conflict-free-replicated-data-types">Conflict-free replicated data types</h2>
+<p>If we implement replication without guaranteeing total order, we don't need to serialize all writes through a single node.</p>
+<p>However, since replicas can receive messages in different order, their states can diverge.
+Hence, for this to work, divergence can only be temporary &amp; the replica states need to converge back to the same state.</p>
+<p>This is the main mechanism behind eventual consistency:
+* Eventual delivery guarantee - every update applied to a replica is eventually applied to all replicas
+* Convergence guarantee - replicas that have applied the same updates eventually reach the same state</p>
+<p>Using a broadcast protocol that doesn't guarantee message order can lead to divergence.
+You'll have to reconcile conflicting writes via consensus that all replicas need to agree to.
+<img alt="divergence" src="images/divergence.png" /></p>
+<p>This approach has better availability and performance than total order broadcast.
+Consensus is only required to reconcile conflicts &amp; can be moved off the critical path.</p>
+<p>However, there is a way to resolve conflicts without using consensus at all - eg the write with the latest timestamp wins.
+If we do this, conflicts will be resolved by design &amp; there is no need for consensus.</p>
+<p>This replication strategy offers stronger guarantees than eventual consistency:
+ * Eventual delivery - same as before
+ * Strong convergence - replicas that have executed the same updates <strong>have</strong> the same state</p>
+<p>This is referred to as <strong>strong eventual consistency</strong>.</p>
+<p>There are certain conditions to guarantee that replicas strongly converge.</p>
+<p>Consider a replicated data store which supports query and update operations and behaves in the following way:
+ * When a query is received, a replica immediately replies with its local state
+ * When an update is received, it is first applied to local state and then broadcast to all replicas
+ * When a broadcast message is received, the received state is merged with its own</p>
+<p>If two replicas converge, one way to resolve the conflicts is to have an arbiter (consensus) which determines who wins.</p>
+<p>Alternatively, convergence can be achieved without an arbiter if these two conditions are met:
+ * The object's possible states form a <a href="https://www.youtube.com/watch?v=LCFf2DBTVmo&amp;ab_channel=NesoAcademy">semilattice</a> (set whose elements can be <a href="https://eli.thegreenplace.net/2018/partial-and-total-orders/">partially ordered</a>)
+ * The merge operation returns the least upper bound between two object states. Hence, it needs to be idempotent, commutative and associative.</p>
+<p><strong>Note</strong>: The next couple of lines are personal explanation which might not be 100% correct according to mathy folks, but suffices for my own understanding.</p>
+<p>What this means is that if you visualize a graph of an object's ordered states, if you take two of them (c and d), you might not immediately determine which one is greater, but there is eventually some state which is "greater" than both of the non-comparable states (e).
+<img alt="semilattice" src="images/semilattice.png" /></p>
+<p>Put into practice, if you have two replicas, whose states have diverged (c and d), eventually, they will converge back to the same value (e).</p>
+<p>The second part of the requirement mandates that the operation for merging two states needs to be:
+ * Idempotent: x + x = x
+ * Commutative: (x + y) + z = x + (y + z)
+ * Associative: x + y = y + x</p>
+<p>This is because you're not guaranteed that you'll always get to merge two states in the same order (associative &amp; commutative) and you might get a merge request for the same states twice (idempotent).</p>
+<p>A data type which has this property is referred to as a <strong>convergent replicated data type</strong> which is part of the family of <strong>conflict-free replicated data types (CRDT)</strong>.</p>
+<p>Example - integers can be (partially) ordered and the merge operation is taking the maximum of two ints (least upper bound).</p>
+<p>Replicas will always converge to the global maximum even if requests are delivered out of order and/or multiple times.
+With this scheme, replicas can also use an unreliable broadcast protocol as long as they periodically broadcast their states &amp; merge them. (anti-entropy mechanism).</p>
+<p>Some data types which converge when replicated - registers, counters, sets, dictionaries, graphs.</p>
+<p>Example - registers are a memory cell, containing a byte array. 
+They can be made convergent by defining partial order and merge operation.</p>
+<p>Two common implementations are last-writer-wins registers (LWW) and multi-value registers (MV).</p>
+<p>LWW registers associate a timestamp with every update, making them order-able.
+The timestamp can be a Lamport timestamp to preserve happened-before relationships with a replica identifier to break ties.</p>
+<p>A lamport clock is sufficient because it guarantees happens-before relationships between dependent events &amp; the updates we have are dependent.
+<img alt="lww-register" src="images/lww-register.png" /></p>
+<p>The issue with LWW registers is that when there are concurrent updates, one of them randomly wins.</p>
+<p>An alternative is to store both states in the register &amp; let applications determine which update to take.
+That's what a MV register does. It uses a vector clock and the merge operation returns the union of all concurrent updates.
+<img alt="mv-register" src="images/mv-register.png" /></p>
+<p>CRDTs can be composed - eg, you can have a dictionary of LWW or MV registers.
+Dynamo-style data stores leverage this.</p>
+<h2 id="dynamo-style-data-stores">Dynamo-style data stores</h2>
+<p>Dynamo is the most popular eventually consistent and highly available key-value store.</p>
+<p>Others are inspired by it - Cassandra &amp; Riak KV.</p>
+<p>How it works:
+ * Every replica accepts read and write requests
+ * When a client wants to write, it sends the write request to all N replicas, but waits for acknowledgement from only W replicas (write quorum).
+ * Reads work similarly to writes - sent to all replicas (N), sufficient to get acknowledgement by a subset of them (R quorum).</p>
+<p>To resolve conflicts, entries behave like LWW or MV registers, depending on the implementation you choose.</p>
+<p>W and R are configurable based on your needs:
+ * Stronger consistency - When <code>W + R &gt; N</code>, at least one read will always return the latest version.*
+  * This is not guaranteed on its own. Writes sent to N replicas might not make it to all of them. To make this work, writes need to be bundled in an atomic transaction.
+ * Max performance \w consistency cost - <code>W + R &lt; N</code>.</p>
+<p>You can fine-tune read/write performance while preserving strong consistency:
+ * When R is small, reads are fast at the expense of slower writes and vice versa, assuming you preserve <code>W + R &gt; N</code>.
+<img alt="w-r-greater-than-n" src="images/w-r-greater-than-n.png" /></p>
+<p>This mechanism doesn't guarantee that all replicas will converge on its own. If a replica never receives a write request, it will never converge.</p>
+<p>To solve this issue, there are two possible anti-entropy mechanisms you can use:
+ * Read repair - if a client detects that a replica doesn't have the latest version of a key, it sends a write request to that replica.
+ * Replica synchronization - Replicas periodically exchange state information to notify each other of their latest states. To minimize amount of data transmitted, replicas exchange merkle tree hashes instead of the key-value pairs directly.</p>
+<h2 id="the-calm-theorem">The CALM theorem</h2>
+<p>When does an application need coordination (ie consensus) and when can it use an eventually consistent data store?</p>
+<p>The CALM theorem states that a program can be consistent and not use coordination if it is monotonic.</p>
+<p>An application is monotonic if new inputs further refine the output vs. taking it back to a previous state.
+ * Example monotonic program - a counter, which supports increment(n) operations, eg inc(1), inc(2) = 3 == inc(2), inc(1) = 3
+ * Example non-monotonic program - arbitrary variable assignment, eg set(5), set(3) = 3 != set(3), set(5) = 5
+   * Bear in mind, though, that if you transform your vanilla register to eg a LWW or MV register, you can make it monotonic. </p>
+<p>A monotonic program can be consistent, available and partition tolerant all at once.</p>
+<p>However, consistent in the context of CALM is different from consistent in the context of CAP.</p>
+<p>CAP refers to consistency in terms of reads and writes. CALM refers to consistency in terms of program output.</p>
+<p>It is possible to build applications which are consistent at the application-level but inconsistent on the storage level.</p>
+<h2 id="causal-consistency">Causal consistency</h2>
+<p>Eventual consistency can be used to write consistent, highly available and partition-tolerant applications as long as they're monotonic.</p>
+<p>For many applications, though, eventual consistency guarantees are insufficient.
+Eventual consistency doesn't guarantee that an operation which happened-before another is observed in the same order.</p>
+<p>Eg uploading an image and referencing it in a gallery. In an eventually consistent system, you might get an empty image placeholder for some time.</p>
+<p>Strong consistency helps as it guarantees that if operation B happens, operation A is guaranteed to be observed.</p>
+<p>There is an alternative which is not strongly consistent but good enough to guarantee happens-before relationships - causal consistency.
+Causal consistency imposes a partial order on operations, while strong consistency imposes global order.</p>
+<p><strong>Causal consistency is the strongest consistency model which enables building highly available and partition tolerant systems.</strong></p>
+<p>The essence of this model is that you as a client only care about happens-before relationships of the operations concerning you, rather than all operations within the system.</p>
+<p>Example:
+ * Client A writes a value (operation A)
+ * Client B reads the same value (operation B)
+ * Client B writes another value (operation C)
+ * Client C writes an unrelated value (operation D)</p>
+<p>With a causally consistent system, the system guarantees that operation C happens-before A, hence any client which queries the system must receive operations A and C in this order.</p>
+<p>However, it doesn't guarantee the order of operation D in relation to the other operations. Hence, some clients might read operation A and D in this order, others in reverse order.</p>
+<p>COPS is a causally-consistent key-value store.
+ * clients can make read/write requests to any replica.
+ * When a client receives a read request, it keeps track of the returned value's version in a local key-version dictionary to keep track of dependencies
+ * Writes are accompanied by copies of the locally-stored key-version dictionary. 
+ * Replica assigns a version to the write and sends back the new version to the client
+ * The write is propagated to the other replicas
+ * When a replica receives a write request, it doesn't commit it immediately. 
+ * It first checks if all the write's dependencies are committed locally. Write is only committed when all dependencies are resolved.
+<img alt="cops-example" src="images/cops-example.png" /></p>
+<p>One caveat is that there is a possibility of data loss if a replica commits a write locally but fails before broadcasting it to the rest of the nodes.</p>
+<p>This is considered acceptable in COPS case to avoid paying the price of waiting for long-distance requests before acknowledging a write.</p>
+<h2 id="practical-considerations_1">Practical considerations</h2>
+<p>In summary, replication implies that we have to choose between consistency and availability.</p>
+<p>In other words, we must minimize coordination to build a scalable system.</p>
+<p>This limitation is present in any large-scale system and there are data stores which allow you to control it - eg Cosmos DB enables developers to choose among 5 consistency models, ranging from eventual consistency to strong consistency, where weaker consistency models have higher throughput.</p>
+<h1 id="transactions">Transactions</h1>
+<p>Transactions allow us to execute multiple operations atomically - either all of them pass or none of them do.</p>
+<p>If the application only deals with data within a SQL database, bundling queries into a transaction is straightforward.
+However, if operations are performed on multiple data stores, you'll have to execute a distributed transaction which is a lot harder.</p>
+<p>In microservice environments, however, this scenario is common.</p>
+<h2 id="acid">ACID</h2>
+<p>If you eg have to execute a money transfer from one bank to another and the deposit on the oher end fails, then you'd like your money to get deposited back into your account.</p>
+<p>In a traditional database, transactions are ACID:
+ * Atomicity - partial failures aren't possible. Either all operations succeed or all fail.
+ * Consistency - transactions can only transition a database from one valid state to another. The application cannot be left in an invalid state.
+ * Isolation - concurrent execution of transactions doesn't cause race conditions. It appears as if transactions execute sequentially when they actually don't.
+ * Durability - if a transaction is committed, its changes are persisted &amp; there is no way for the database to lose those changes.</p>
+<p>Let's explore how transactions are implemented in centralized, non-distributed databases before going into distributed transactions.</p>
+<h2 id="isolation">Isolation</h2>
+<p>One way to achieve isolation is for transactions to acquire a global lock so that only one transaction executes at a time.
+This will work but is not efficient.</p>
+<p>Instead, databases do let transactions run concurrently, but this can lead to all sorts of race conditions:
+ * dirty write - transaction overwrites the value written by another transaction which is not committed yet.
+ * dirty read - transaction reads a value written by a transaction which is not committed yet.
+ * fuzzy read - transaction reads a value twice &amp; sees different values because another transaction modified the value in-between.
+ * phantom read - transactions read a group matching a given criteria, whilst another transaction changes objects due to which the original matched group changes.</p>
+<p>To prevent this, transactions need to be isolated from one another. This is fine-tuned by the transaction's isolation level.</p>
+<p>The stronger the isolation level, the stronger the protection against any of the above issues is. However, transactions are less performant as a result.
+<img alt="tx-isolation-levels" src="images/tx-isolation-levels.png" /></p>
+<p>Serializability is the strongest isolation level - it guarantees that executing a group of transactions has the same effect as executing them sequentially.
+It guarantees strong consistency, but it involves coordination, which increases contention &amp; hence, transactions are less performant.</p>
+<p>Our goal as developers is to maximize concurrency while preserving the appearance of serial execution.</p>
+<p>The concurrency strategy is determined by a concurrency control protocol and there are two kinds - pessimistic and optimistic.</p>
+<h2 id="concurrency-control">Concurrency control</h2>
+<p>Pessimistic protocols use locks to block other transactions from accessing a shared object.</p>
+<p>The most common implementation is two-phase locking (2PL):
+ * Read locks can be acquired by multiple transactions on an object. It is released once all transactions holding the lock commit.
+ * Read locks block transactions which want to acquire a write lock.
+ * Write locks are held by one transaction only. It prevents read locks from getting acquired on the locked object. It is released once the transaction commits.</p>
+<p>With 2PL locking, it is possible to create a deadlock - tx A locks object 1 and wants to read object 2, while tx B locks object 2 and wants to read object 1.</p>
+<p>A common approach to handling deadlocks is to detect them, after which a "victim" transaction is chosen &amp; aborted.</p>
+<p>Optimistic protocols, on the other hand, works on the principle of (optimistically) attempting to execute transactions concurrently without blocking and if it turns out a value used by a transaction was mutated, that transaction is restarted.</p>
+<p>This relies on the fact that transactions are usually short-lived and collisions rarely happen.</p>
+<p>Optimistic concurrency control (OCC) is the most popular optimistic protocol.
+In OCC, transactions make changes to a local data store. Once it attempts to commit, it checks if the transaction's workspace collides with another transaction's workspace and if so, the transaction is restarted.</p>
+<p>Optimistic protocols are usually more performant than pessimistic protocols and are well suited for workflows with a lot of reads and hardly any writes.
+Pessimistic protocols are more appropriate for conflict-heavy workflows as they avoid wasting time doing work which might get discarded.</p>
+<p>Both protocols, however, are not optimal for read-only transactions:
+ * With pessimistic protocols, a read-only tx might have to wait for a long time to acquire a read lock.
+ * With optimistic protocols, a read-only tx might get aborted because the value it reads gets written in the middle of it.</p>
+<p>Multi-version concurrency control (MVCC) aims to address this issue:
+ * Version tags are maintained for each record.
+ * When a write happens, a new version tag is created
+ * When a read happens, the newest version <strong>since the transaction started</strong> is read
+ * For write operations, the protocol falls back to standard pessimistic or optimistic concurrency.</p>
+<p>This allows read-only transactions to not get blocked or aborted as they don't conflict with write transactions and is a major performance improvement.
+This is why MVCC is the most widely used concurrency control scheme nowadays. The trade-off is that your data store becomes bigger as it needs to tore version tags for each record.</p>
+<p>A limited form of OCC is used in distributed applications:
+ * Each object has a version number.
+ * A transaction assigns a new version number to the object &amp; proceeds with the operation.
+ * Once it is ready to commit, the object is only updated if the original version tag hasn't changed.</p>
+<h2 id="atomicity">Atomicity</h2>
+<p>Either all operations within a transaction pass or all of them fail.</p>
+<p>To guarantee this, data stores record changes in a write-ahead log (WAL) persisted on disk before applying the operations.
+Each log entry contains the transaction id, the id of the modified object and both the old and new values.</p>
+<p>In most circumstances, that log is not read. But if the data store crashes before a transaction finishes persisting the changes, the database recovers the latest state by reading the WAL. Alternatively, if a transaction is rollbacked, the log is used to undo the persisted changes.</p>
+<p>This WAL-based recovery mechanism guarantees atomicity only within a single data store.
+If eg you have two transactions which span different data store (money transfer from one bank to the other), this mechanism is insufficient.</p>
+<h2 id="two-phase-commit">Two-phase commit</h2>
+<p>Two-phase commit (2PC) is a protocol used to implement atomic transactions across multiple processes.</p>
+<p>One process is a coordinator which orchestrates the actions of all other processes - the participants.</p>
+<p>Eg, the client initiating a transaction can act as a coordinator.</p>
+<p>How it works:
+ * Coordinator sends <strong>prepare</strong> request to participants - asking them if they are ready to commit.
+ * If all of them are, coordinator then sends <strong>commit</strong> request to execute the commits.
+ * If not all processes reply or aren't prepared for some reason, coordinator sends an <strong>abort</strong> request.
+<img alt="2pc-example" src="images/2pc-example.png" /></p>
+<p>There are two critical points in the above flow:
+ * If a participants says it's prepared, it can't move forward without receiving a commit or abort request. This means that a faulty coordinator can make the participant stuck.
+ * Once a coordinator decides to commit or abort a transaction, it has to see it through no matter what. If a participant is temporarily down, the coordinator has to retry.</p>
+<p>2PC has a mixed reputation:
+ * It's slow due to multiple round trips for the same transaction
+ * If a process crashes, all other processes are blocked.</p>
+<p>One way to mitigate 2PC's shortcomings is to make it resilient to failures - eg replicate coordinator via Raft or participants via primary-secondary replication.</p>
+<p>Atomically committing a transaction is a type of consensus called <strong>uniform consensus</strong> - all processes have to agree on a value, even faulty ones.
+In contrast, standard consensus only guarantees that non-faulty processes agree on a value, meaning that uniform consensus is harder to implement.</p>
+<h2 id="newsql">NewSQL</h2>
+<p>Originally, we had SQL databases, which offered ACID guarantees but were hard to scale.
+In late 2000s, NoSQL databases emerged which ditched ACID guarantees in favor of scalability.</p>
+<p>So for a long time, one had to choose between scale &amp; strong consistency.
+Nowadays, a new type of databases emerged which offer both strong consistency guarantees and high scalability. They're referred to as <strong>NewSQL</strong>.</p>
+<p>One of the most successful implementations is Google's Spanner:
+ * It breaks key-value pairs into partitions in order to scale.
+ * Each partition is replicated among a group of nodes using state machine replication (Paxos).
+ * In each such group (replication group) there is a leader.
+ * The leader applies client write requests for that partition by replicating it among the majority of nodes &amp; then applying it.
+ * The leader is also a lock manager, which implements 2PL to isolate transactions on the same partition from one another.
+ * For multiple partition transactions, Spanner implements 2PC. The coordinator is one of the involved partitions' leader.
+ * The transaction is logged into a WAL. If the coordinator crashes, one of the other nodes in the replication group picks up from where they left of using the WAL.
+ * Spanner uses MVCC for read-only transactions and 2PL for write transactions to achieve maximum concurrency.
+ * MVCC is based on timestamping records using physical clocks. This is easy to do on a single machine, but not as easy in a distributed system.
+ * To solve this, Spanner calculates the possible timestamp offset &amp; transactions wait for the longest possible offset to avoid future transactions to be logged with earlier timestamps.
+ * This mechanism means that the timestamp offset needs to be as low as possible to have fast transactions. Therefore, Google has deployed very accurate GPS and atomic clocks in every data center.
+<img alt="spanner-example" src="images/spanner-example.png" /></p>
+<p>Another system inspired by Spanner is CockroachDB which works in a similar way, but uses hybrid-logical clocks to avoid having to provision highly costly atomic clocks.</p>
+<h1 id="asynchronous-transactions">Asynchronous transactions</h1>
+<p>2PC is synchronous &amp; blocking. It is usually combined with 2PL to provide isolation.</p>
+<p>If any of the participants is not available, the transaction can't make progress.</p>
+<p>The underlying assumption of 2PC is that transactions are short-lived and participants are highly available.
+We can control availability, but some transactions are inherently slow.</p>
+<p>In addition to that, if the transaction spans several organizations, they might be unwilling to grant you the power to block their systems.</p>
+<p>Solution from real world - fund transfer:
+ * Asynchronous &amp; atomic
+ * Check is sent from one bank to another and it can't be lost or deposited more than once.
+ * While check is in transfer, bank accounts are in an inconsistent state (lack of isolation).</p>
+<p>Checks are an example of persistent messages - in other words, they are processed <strong>exactly once</strong>.</p>
+<h2 id="outbox-pattern">Outbox Pattern</h2>
+<p>Common issue - persist data in multiple data stores, eg Database + Elasticsearch.</p>
+<p>The problem is the lack of consistency between the non-related services.</p>
+<p>Solution - using the outbox pattern:
+ * When saving the data in DB, save it to the designated table + a special "outbox" table.
+ * A process periodically starts which queries the outbox table &amp; sends pending messages to the second data store.
+ * A message channel such as Kafka can be used to achieve idempotency &amp; guaranteed delivery.</p>
+<h2 id="sagas">Sagas</h2>
+<p>Problem - we're a travel booking service which coordinates booking travels + hotels via separate third-party services.</p>
+<p>Bookings must happen atomically &amp; both the travel &amp; hotel booking services can fail.</p>
+<p>Booking a trip requires several steps to complete, some of which are required on failure.</p>
+<p>The saga pattern provides a solution:
+ * A distributed transaction is composed of several local transactions, each of which has a compensating transaction which reverses it.
+ * The saga guarantees that either all transactions succeed or in case of failure, the compensating transactions reverse the partial result.</p>
+<p>A saga can be implemented via an orchestrator, who manages execution of local transactions across the involved processes.</p>
+<p>In our example, the travel booking saga can be implemented as follows:
+ * T1 is executed - flight is booked via third-party service.
+ * T2 is executed - hotel is booked via third-party service.
+ * If there are any failures, execute compensating transactions C2 and C1:
+   * C1 - cancel flight via third-party service API.
+   * C2 - cancel hotel booking via third-party service API.</p>
+<p>The orchestrator can communicate via message channels (ie Kafka) to tolerate temporary failures. The requests need to be idempotent to tolerate temporary failures.
+It also has to checkpoint a transaction's intermediary state to persistent storage in case the orchestrator crashes.
+<img alt="travel-booking-saga" src="images/travel-booking-saga.png" /></p>
+<p>In practice, one doesn't need to implement workflow engines from scratch. One can leverage workflow engines such as Temporal which already do this for you.</p>
+<h2 id="isolation_1">Isolation</h2>
+<p>A sacrifice we endured when we used distributed transactions is the lack of isolation - distributed transactions operate on the same data &amp; there is no isolation between them.</p>
+<p>One way to work around this is to use "semantic locks" - the data used by a transaction is marked as "dirty" and is unavailable for use by other transactions.</p>
+<p>Other transactions reliant on the dirty data can either fail &amp; rollback or wait until the flag is cleared.</p>
+<h1 id="summary_1">Summary</h1>
+<p>Takeaways:
+ * Failures are unavoidable - systems would be so much simpler if they needn't be fault tolerant.
+ * Coordination is expensive - keep it off the critical path when possible.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../../..", "features": [], "search": "../../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>

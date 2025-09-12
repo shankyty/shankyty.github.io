@@ -1,0 +1,1590 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://example.com/booknotes/system-design-interview/chapter27/">
+      
+      
+        <link rel="prev" href="../chapter26/">
+      
+      
+        <link rel="next" href="../chapter28/">
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.19">
+    
+    
+      
+        <title>Payment System - Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#payment-system" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Notes" class="md-header__button md-logo" aria-label="Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Payment System
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Notes" class="md-nav__button md-logo" aria-label="Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Welcome to My Notes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Booknotes
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Booknotes
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    System design
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            System design
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    System Design
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1_2" id="__nav_2_1_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Understanding distributed systems
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            Understanding distributed systems
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-design/understanding-distributed-systems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Index
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-design/understanding-distributed-systems/part00/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-design/understanding-distributed-systems/part01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Communication
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-design/understanding-distributed-systems/part02/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Coordination
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-design/understanding-distributed-systems/part03/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Scalability
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-design/understanding-distributed-systems/part04/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Resiliency
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-design/understanding-distributed-systems/part05/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Maintainability
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    System design interview
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            System design interview
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    System Design Interview - An Insider's Guide (vol 1 &amp; 2)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter02/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Scale From Zero to Millions of Users
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter03/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Back-of-the-envelope Estimation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter04/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    A Framework for System Design Interviews
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter05/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Rate Limiter
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter06/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design Consistent Hashing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter07/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Key-Value Store
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Unique ID Generator in Distributed Systems
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter09/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a URL Shortener
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Web Crawler
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter11/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Notification System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter12/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a News Feed System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter13/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Chat System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design A Search Autocomplete System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design YouTube
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter16/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design Google Drive
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter17/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Proximity Service
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter18/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Nearby Friends
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter19/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Google Maps
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter20/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Distributed Message Queue
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter21/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Metrics Monitoring and Alerting System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter22/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Ad Click Event Aggregation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter23/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hotel Reservation System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter24/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Distributed Email Service
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter25/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    S3-like Object Storage
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter26/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Real-time Gaming Leaderboard
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Payment System
+    
+  </span>
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter28/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Digital Wallet
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter29/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Stock Exchange
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="payment-system">Payment System</h1>
+<p>We'll design a payment system in this chapter, which underpins all of modern e-commerce.</p>
+<p>A payment system is used to settle financial transactions, transferring monetary value.</p>
+<h1 id="step-1-understand-the-problem-and-establish-design-scope">Step 1 - Understand the Problem and Establish Design Scope</h1>
+<ul>
+<li>C: What kind of payment system are we building?</li>
+<li>I: A payment backend for an e-commerce system, similar to Amazon.com. It handles everything related to money movement.</li>
+<li>C: What payment options are supported - Credit cards, PayPal, bank cards, etc?</li>
+<li>I: The system should support all these options in real life. For the purposes of the interview, we can use credit card payments.</li>
+<li>C: Do we handle credit card processing ourselves?</li>
+<li>I: No, we use a third-party provider like Stripe, Braintree, Square, etc.</li>
+<li>C: Do we store credit card data in our system?</li>
+<li>I: Due to compliance reasons, we do not store credit card data directly in our systems. We rely on third-party payment processors.</li>
+<li>C: Is the application global? Do we need to support different currencies and international payments?</li>
+<li>I: The application is global, but we assume only one currency is used for the purposes of the interview.</li>
+<li>C: How many payment transactions per day do we support?</li>
+<li>I: 1mil transactions per day.</li>
+<li>C: Do we need to support the payout flow to eg payout to payers each month?</li>
+<li>I: Yes, we need to support that</li>
+<li>C: Is there anything else I should pay attention to?</li>
+<li>I: We need to support reconciliations to fix any inconsistencies in communicating with internal and external systems.</li>
+</ul>
+<h2 id="functional-requirements">Functional requirements</h2>
+<ul>
+<li>Pay-in flow - payment system receives money from customers on behalf of merchants</li>
+<li>Pay-out flow - payment system sends money to sellers around the world</li>
+</ul>
+<h2 id="non-functional-requirements">Non-functional requirements</h2>
+<ul>
+<li>Reliability and fault-tolerance. Failed payments need to be carefully handled</li>
+<li>A reconciliation between internal and external systems needs to be setup.</li>
+</ul>
+<h2 id="back-of-the-envelope-estimation">Back-of-the-envelope estimation</h2>
+<p>The system needs to process 1mil transactions per day, which is 10 transactions per second.</p>
+<p>This is not a high throughput for any database system, so it's not the focus of this interview.</p>
+<h1 id="step-2-propose-high-level-design-and-get-buy-in">Step 2 - Propose High-Level Design and Get Buy-In</h1>
+<p>At a high-level, we have three actors, participating in money movement:
+<img alt="high-level-flow" src="images/high-level-flow.png" /></p>
+<h2 id="pay-in-flow">Pay-in flow</h2>
+<p>Here's the high-level overview of the pay-in flow:
+<img alt="pay-in-flow-high-level" src="images/payin-flow-high-level.png" />
+ * Payment service - accepts payment events and coordinates the payment process. It typically also does a risk check using a third-party provider for AML violations or criminal activity.
+ * Payment executor - executes a single payment order via the Payment Service Provider (PSP). Payment events may contain several payment orders.
+ * Payment service provider (PSP) - moves money from one account to another, eg from buyer's credit card account to e-commerce site's bank account.
+ * Card schemes - organizations that process credit card operations, eg Visa MasterCard, etc.
+ * Ledger - keeps financial record of all payment transactions.
+ * Wallet - keeps the account balance for all merchants.</p>
+<p>Here's an example pay-in flow:
+ * user clicks "place order" and a payment event is sent to the payment service
+ * payment service stores the event in its database
+ * payment service calls the payment executor for all payment orders, part of that payment event
+ * payment executor stores the payment order in its database
+ * payment executor calls external PSP to process the credit card payment
+ * After the payment executor processes the payment, the payment service updates the wallet to record how much money the seller has
+ * wallet service stores updated balance information in its database
+ * payment service calls the ledger to record all money movements</p>
+<h2 id="apis-for-payment-service">APIs for payment service</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>POST /v1/payments
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>{
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  &quot;buyer_info&quot;: {...},
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  &quot;checkout_id&quot;: &quot;some_id&quot;,
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  &quot;credit_card_info&quot;: {...},
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  &quot;payment_orders&quot;: [{...}, {...}, {...}]
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>}
+</code></pre></div>
+<p>Example <code>payment_order</code>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>{
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  &quot;seller_account&quot;: &quot;SELLER_IBAN&quot;,
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  &quot;amount&quot;: &quot;3.15&quot;,
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  &quot;currency&quot;: &quot;USD&quot;,
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  &quot;payment_order_id&quot;: &quot;globally_unique_payment_id&quot;
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>}
+</code></pre></div></p>
+<p>Caveats:
+ * The <code>payment_order_id</code> is forwarded to the PSP to deduplicate payments, ie it is the idempotency key.
+ * The amount field is <code>string</code> as <code>double</code> is not appropriate for representing monetary values.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>GET /v1/payments/{:id}
+</code></pre></div>
+<p>This endpoint returns the execution status of a single payment, based on the <code>payment_order_id</code>.</p>
+<h2 id="payment-service-data-model">Payment service data model</h2>
+<p>We need to maintain two tables - <code>payment_events</code> and <code>payment_orders</code>.</p>
+<p>For payments, performance is typically not an important factor. Strong consistency, however, is.</p>
+<p>Other considerations for choosing the database:
+ * Strong market of DBAs to hire to administer the databaseS
+ * Proven track-record where the database has been used by other big financial institutions
+ * Richness of supporting tools
+ * Traditional SQL over NoSQL/NewSQL for its ACID guarantees</p>
+<p>Here's what the <code>payment_events</code> table contains:
+ * <code>checkout_id</code> - string, primary key
+ * <code>buyer_info</code> - string (personal note - prob a foreign key to another table is more appropriate)
+ * <code>seller_info</code> - string (personal note - same remark as above)
+ * <code>credit_card_info</code> - depends on card provider
+ * <code>is_payment_done</code> - boolean</p>
+<p>Here's what the <code>payment_orders</code> table contains:
+ * <code>payment_order_id</code> - string, primary key
+ * <code>buyer_account</code> - string
+ * <code>amount</code> - string
+ * <code>currency</code> - string
+ * <code>checkout_id</code> - string, foreign key
+ * <code>payment_order_status</code> - enum (<code>NOT_STARTED</code>, <code>EXECUTING</code>, <code>SUCCESS</code>, <code>FAILED</code>)
+ * <code>ledger_updated</code> - boolean
+ * <code>wallet_updated</code> - boolean</p>
+<p>Caveats:
+ * there are many payment orders, linked to a given payment event
+ * we don't need the <code>seller_info</code> for the pay-in flow. That's required on pay-out only
+ * <code>ledger_updated</code> and <code>wallet_updated</code> are updated when the respective service is called to record the result of a payment
+ * payment transitions are managed by a background job, which checks updates of in-flight payments and triggers an alert if a payment is not processed in a reasonable timeframe</p>
+<h2 id="double-entry-ledger-system">Double-entry ledger system</h2>
+<p>The double-entry accounting mechanism is key to any payment system. It is a mechanism of tracking money movements by always applying money operations to two accounts, where one's account balance increases (credit) and the other decreases (debit):
+| Account | Debit | Credit |
+|---------|-------|--------|
+| buyer   | $1    |        |
+| seller  |       | $1     |</p>
+<p>Sum of all transaction entries is always zero. This mechanism provides end-to-end traceability of all money movements within the system.</p>
+<h2 id="hosted-payment-page">Hosted payment page</h2>
+<p>To avoid storing credit card information and having to comply with various heavy regulations, most companies prefer utilizing a widget, provided by PSPs, which store and handle credit card payments for you:
+<img alt="hosted-payment-page" src="images/hosted-payment-page.png" /></p>
+<h2 id="pay-out-flow">Pay-out flow</h2>
+<p>The components of the pay-out flow are very similar to the pay-in flow.</p>
+<p>Main differences:
+ * money is moved from e-commerce site's bank account to merchant's bank account
+ * we can utilize a third-party account payable provider such as Tipalti
+ * There's a lot of bookkeeping and regulatory requirements to handle with regards to pay-outs as well</p>
+<h1 id="step-3-design-deep-dive">Step 3 - Design Deep Dive</h1>
+<p>This section focuses on making the system faster, more robust and secure.</p>
+<h2 id="psp-integration">PSP Integration</h2>
+<p>If our system can directly connect to banks or card schemes, payment can be made without a PSP.
+These kinds of connections are very rare and uncommon, typically done at large companies which can justify the investment.</p>
+<p>If we go down the traditional route, a PSP can be integrated in one of two ways:
+ * Through API, if our payment system can collect payment information
+ * Through a hosted payment page to avoid dealing with payment information regulations</p>
+<p>Here's how the hosted payment page workflow works:
+<img alt="hosted-payment-page-workflow" src="images/hosted-payment-page-workflow.png" />
+ * User clicks "checkout" button in the browser
+ * Client calls the payment service with the payment order information
+ * After receiving payment order information, the payment service sends a payment registration request to the PSP.
+ * The PSP receives payment info such as currency, amount, expiration, etc, as well as a UUID for idempotency purposes. Typically the UUID of the payment order.
+ * The PSP returns a token back which uniquely identifies the payment registration. The token is stored in the payment service database.
+ * Once token is stored, the user is served with a PSP-hosted payment page. It is initialized using the token as well as a redirect URL for success/failure. 
+ * User fills in payment details on the PSP page, PSP processes payment and returns the payment status
+ * User is now redirected back to the redirectURL. Example redirect url - <code>https://your-company.com/?tokenID=JIOUIQ123NSF&amp;payResult=X324FSa</code>
+ * Asynchronously, the PSP calls our payment service via a webhook to inform our backend of the payment result
+ * Payment service records the payment result based on the webhook received</p>
+<h2 id="reconciliation">Reconciliation</h2>
+<p>The previous section explains the happy path of a payment. Unhappy paths are detected and reconciled using a background reconciliation process.</p>
+<p>Every night, the PSP sends a settlement file which our system uses to compare the external system's state against our internal system's state.
+<img alt="settlement-report" src="images/settlement-report.png" /></p>
+<p>This process can also be used to detect internal inconsistencies between eg the ledger and the wallet services.</p>
+<p>Mismatches are handled manually by the finance team. Mismatches are handled as:
+ * classifiable, hence, it is a known mismatch which can be adjusted using a standard procedure
+ * classifiable, but can't be automated. Manually adjusted by the finance team
+ * unclassifiable. Manually investigated and adjusted by the finance team</p>
+<h2 id="handling-payment-processing-delays">Handling payment processing delays</h2>
+<p>There are cases, where a payment can take hours to complete, although it typically takes seconds.</p>
+<p>This can happen due to:
+ * a payment being flagged as high-risk and someone has to manually review it
+ * credit card requires extra protection, eg 3D Secure Authentication, which requires extra details from card holder to complete</p>
+<p>These situations are handled by:
+ * waiting for the PSP to send us a webhook when a payment is complete or polling its API if the PSP doesn't provide webhooks
+ * showing a "pending" status to the user and giving them a page, where they can check-in for payment updates. We could also send them an email once their payment is complete</p>
+<h2 id="communication-among-internal-services">Communication among internal services</h2>
+<p>There are two types of communication patterns services use to communicate with one another - synchronous and asynchronous.</p>
+<p>Synchronous communication (ie HTTP) works well for small-scale systems, but suffers as scale increases:
+ * low performance - request-response cycle is long as more services get involved in the call chain
+ * poor failure isolation - if PSPs or any other service fails, user will not receive a response
+ * tight coupling - sender needs to know the receiver
+ * hard to scale - not easy to support sudden increase in traffic due to not having a buffer</p>
+<p>Asynchronous communication can be divided into two categories.</p>
+<p>Single receiver - multiple receivers subscribe to the same topic and messages are processed only once:
+<img alt="single-receiver" src="images/single-receiver.png" /></p>
+<p>Multiple receivers - multiple receivers subscribe to the same topic, but messages are forwarded to all of them:
+<img alt="multiple-receiver" src="images/multiple-receiver.png" /></p>
+<p>Latter model works well for our payment system as a payment can trigger multiple side effects, handled by different services.</p>
+<p>In a nutshell, synchronous communication is simpler but doesn't allow services to be autonomous. 
+Async communication trades simplicity and consistency for scalability and resilience.</p>
+<h2 id="handling-failed-payments">Handling failed payments</h2>
+<p>Every payment system needs to address failed payments. Here are some of the mechanism we'll use to achieve that:
+ * Tracking payment state - whenever a payment fails, we can determine whether to retry/refund based on the payment state.
+ * Retry queue - payments which we'll retry are published to a retry queue
+ * Dead-letter queue - payments which have terminally failed are pushed to a dead-letter queue, where the failed payment can be debugged and inspected.
+<img alt="failed-payments" src="images/failed-payments.png" /></p>
+<h2 id="exactly-once-delivery">Exactly-once delivery</h2>
+<p>We need to ensure a payment gets processed exactly-once to avoid double-charging a customer.</p>
+<p>An operation is executed exactly-once if it is executed at-least-once and at-most-once at the same time.</p>
+<p>To achieve the at-least-once guarantee, we'll use a retry mechanism:
+<img alt="retry-mechanism" src="images/retry-mechanism.png" /></p>
+<p>Here are some common strategies on deciding the retry intervals:
+ * immediate retry - client immediately sends another request after failure
+ * fixed intervals - wait a fixed amount of time before retrying a payment
+ * incremental intervals - incrementally increase retry interval between each retry
+ * exponential back-off - double retry interval between subsequent retries
+ * cancel - client cancels the request. This happens when the error is terminal or retry threshold is reached</p>
+<p>As a rule of thumb, default to an exponential back-off retry strategy. A good practice is for the server to specify a retry interval using a <code>Retry-After</code> header.</p>
+<p>An issue with retries is that the server can potentially process a payment twice:
+ * client clicks the "pay button" twice, hence, they are charged twice
+ * payment is successfully processed by PSP, but not by downstream services (ledger, wallet). Retry causes the payment to be processed by the PSP again</p>
+<p>To address the double payment problem, we need to use an idempotency mechanism - a property that an operation applied multiple times is processed only once.</p>
+<p>From an API perspective, clients can make multiple calls which produce the same result. 
+Idempotency is managed by a special header in the request (eg <code>idempotency-key</code>), which is typically a UUID.
+<img alt="idempotency-example" src="images/idempotency-example.png" /></p>
+<p>Idempotency can be achieved using the database's mechanism of adding unique key constraints:
+ * server attempts to insert a new row in the database
+ * the insertion fails due to a unique key constraint violation
+ * server detects that error and instead returns the existing object back to the client</p>
+<p>Idempotency is also applied at the PSP side, using the nonce, which was previously discussed. PSPs will take care to not process payments with the same nonce twice.</p>
+<h2 id="consistency">Consistency</h2>
+<p>There are several stateful services called throughout a payment's lifecycle - PSP, ledger, wallet, payment service.</p>
+<p>Communication between any two services can fail. 
+We can ensure eventual data consistency between all services by implementing exactly-once processing and reconciliation.</p>
+<p>If we use replication, we'll have to deal with replication lag, which can lead to users observing inconsistent data between primary and replica databases.</p>
+<p>To mitigate that, we can serve all reads and writes from the primary database and only utilize replicas for redundancy and fail-over.
+Alternatively, we can ensure replicas are always in-sync by utilizing a consensus algorithm such as Paxos or Raft.
+We could also use a consensus-based distributed database such as YugabyteDB or CockroachDB.</p>
+<h2 id="payment-security">Payment security</h2>
+<p>Here are some mechanisms we can use to ensure payment security:
+ * Request/response eavesdropping - we can use HTTPS to secure all communication
+ * Data tampering - enforce encryption and integrity monitoring
+ * Man-in-the-middle attacks - use SSL \w certificate pinning
+ * Data loss - replicate data across multiple regions and take data snapshots
+ * DDoS attack - implement rate limiting and firewall
+ * Card theft - use tokens instead of storing real card information in our system
+ * PCI compliance - a security standard for organizations which handle branded credit cards
+ * Fraud - address verification, card verification value (CVV), user behavior analysis, etc</p>
+<h1 id="step-4-wrap-up">Step 4 - Wrap Up</h1>
+<p>Other talking points:
+ * Monitoring and alerting
+ * Debugging tools - we need tools which make it easy to understand why a payment has failed
+ * Currency exchange - important when designing a payment system for international use
+ * Geography - different regions might have different payment methods
+ * Cash payment - very common in places like India and Brazil
+ * Google/Apple Pay integration</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>

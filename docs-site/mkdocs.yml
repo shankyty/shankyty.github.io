@@ -1,0 +1,42 @@
+# docs-site/mkdocs.yml
+site_name: Notes
+site_url: https://example.com/
+
+theme:
+  name: material
+  palette:
+    scheme: slate
+
+
+plugins:
+  - search
+  - awesome-pages:
+      collapse_single_pages: true
+markdown_extensions:
+  - tables
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.blocks.admonition:
+      types:
+        - note
+        - abstract
+        - summary
+        - info
+        - tip
+        - success
+        - question
+        - warning
+        - important
+        - failure
+        - danger
+        - bug
+        - example
+        - quote
