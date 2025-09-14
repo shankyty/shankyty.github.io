@@ -1,0 +1,4 @@
+mkdocs-material
+pymdown-extensions
+mkdocs-plugin-tags
+mkdocs-obsidian-interactive-graph-plugin
