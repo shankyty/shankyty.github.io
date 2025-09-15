@@ -1,0 +1,2678 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Some Notes">
+      
+      
+      
+      
+        <link rel="prev" href="../chapter21/">
+      
+      
+        <link rel="next" href="../chapter23/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.19">
+    
+    
+      
+        <title>Ad Click Event Aggregation - My notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ad-click-event-aggregation" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="My notes" class="md-header__button md-logo" aria-label="My notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            My notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Ad Click Event Aggregation
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="My notes" class="md-nav__button md-logo" aria-label="My notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    My notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Welcome to My Notes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    System design interview
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            System design interview
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter02
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter02
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter02/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Scale From Zero to Millions of Users
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter03
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter03
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter03/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Back-of-the-envelope Estimation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter04
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter04
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter04/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    A Framework for System Design Interviews
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter05
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter05
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter05/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Rate Limiter
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter06
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter06
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter06/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design Consistent Hashing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter07
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter07
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter07/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Key-Value Store
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter08
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter08
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Unique ID Generator in Distributed Systems
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_8" id="__nav_2_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter09
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_8">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter09
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter09/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a URL Shortener
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_9" id="__nav_2_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter10
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_9">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter10
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Web Crawler
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_10" id="__nav_2_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter11
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_10">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter11
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter11/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Notification System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_11" id="__nav_2_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter12
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_11">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter12
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter12/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a News Feed System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_12" id="__nav_2_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter13
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_12">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter13
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter13/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design a Chat System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_13" id="__nav_2_13_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter14
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_13">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter14
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design A Search Autocomplete System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_14" id="__nav_2_14_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter15
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_14">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter15
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design YouTube
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_15" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_15" id="__nav_2_15_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter16
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_15_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_15">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter16
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter16/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Design Google Drive
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_16" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_16" id="__nav_2_16_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter17
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_16_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_16">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter17
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter17/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Proximity Service
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_17" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_17" id="__nav_2_17_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter18
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_17">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter18
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter18/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Nearby Friends
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_18" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_18" id="__nav_2_18_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter19
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_18_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_18">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter19
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter19/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Google Maps
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_19" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_19" id="__nav_2_19_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter20
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_19_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_19">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter20
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter20/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Distributed Message Queue
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_20" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_20" id="__nav_2_20_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter21
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_20_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_20">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter21
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter21/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Metrics Monitoring and Alerting System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_21" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_21" id="__nav_2_21_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter22
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_21_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_21">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter22
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Ad Click Event Aggregation
+    
+  </span>
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_22" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_22" id="__nav_2_22_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter23
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_22_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_22">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter23
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter23/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hotel Reservation System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_23" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_23" id="__nav_2_23_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter24
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_23_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_23">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter24
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter24/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Distributed Email Service
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_24" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_24" id="__nav_2_24_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter25
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_24_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_24">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter25
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter25/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    S3-like Object Storage
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_25" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_25" id="__nav_2_25_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter26
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_25_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_25">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter26
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter26/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Real-time Gaming Leaderboard
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_26" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_26" id="__nav_2_26_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter27
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_26_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_26">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter27
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter27/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Payment System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_27" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_27" id="__nav_2_27_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter28
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_27_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_27">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter28
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter28/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Digital Wallet
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_28" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_28" id="__nav_2_28_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Chapter29
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_28_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_28">
+            <span class="md-nav__icon md-icon"></span>
+            Chapter29
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter29/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Stock Exchange
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="ad-click-event-aggregation">Ad Click Event Aggregation<a class="headerlink" href="#ad-click-event-aggregation" title="Permanent link">&para;</a></h1>
+<p>Digital advertising is a big industry with the rise of Facebook, YouTube, TikTok, etc.</p>
+<p>Hence, tracking ad click events is important. In this chapter, we explore how to design an ad click event aggregation system at Facebook/Google scale.</p>
+<p>Digital advertising has a process called real-time bidding (RTB), where digital advertising inventory is bought and sold:
+<img alt="digital-advertising-example" src="images/digital-advertising-example.png" /></p>
+<p>Speed of RTB is important as it usually occurs within a second.
+Data accuracy is also very important as it impacts how much money advertisers pay.</p>
+<p>Based on ad click event aggregations, advertisers can make decisions such as adjust target audience and keywords.</p>
+<h1 id="step-1-understand-the-problem-and-establish-design-scope">Step 1 - Understand the Problem and Establish Design Scope<a class="headerlink" href="#step-1-understand-the-problem-and-establish-design-scope" title="Permanent link">&para;</a></h1>
+<ul>
+<li>C: What is the format of the input data?</li>
+<li>I: 1bil ad clicks per day and 2mil ads in total. Number of ad-click events grows 30% year-over-year.</li>
+<li>C: What are some of the most important queries our system needs to support?</li>
+<li>I: Top queries to take into consideration:</li>
+<li>Return number of click events for ad X in last Y minutes</li>
+<li>Return top 100 most clicked ads in the past 1min. Both parameters should be configurable. Aggregation occurs every minute.</li>
+<li>Support data filtering by <code>ip</code>, <code>user_id</code>, <code>country</code> for the above queries</li>
+<li>C: Do we need to worry about edge cases? Some of the ones I can think of:</li>
+<li>There might be events that arrive later than expected</li>
+<li>There might be duplicate events</li>
+<li>Different parts of the system might be down, so we need to consider system recovery</li>
+<li>I: That's a good list, take those into consideration</li>
+<li>C: What is the latency requirement?</li>
+<li>I: A few minutes of e2e latency for ad click aggregation. For RTB, it is less than a second. It is ok to have that latency for ad click aggregation as those are usually used for billing and reporting.</li>
+</ul>
+<h2 id="functional-requirements">Functional requirements<a class="headerlink" href="#functional-requirements" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Aggregate the number of clicks of <code>ad_id</code> in the last Y minutes</li>
+<li>Return top 100 most clicked <code>ad_id</code> every minute</li>
+<li>Support aggregation filtering by different attributes</li>
+<li>Dataset volume is at Facebook or Google scale</li>
+</ul>
+<h2 id="non-functional-requirements">Non-functional requirements<a class="headerlink" href="#non-functional-requirements" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Correctness of the aggregation result is important as it's used for RTB and ads billing</li>
+<li>Properly handle delayed or duplicate events</li>
+<li>Robustness - system should be resilient to partial failures</li>
+<li>Latency - a few minutes of e2e latency at most</li>
+</ul>
+<h2 id="back-of-the-envelope-estimation">Back-of-the-envelope estimation<a class="headerlink" href="#back-of-the-envelope-estimation" title="Permanent link">&para;</a></h2>
+<ul>
+<li>1bil DAU</li>
+<li>Assuming user clicks 1 ad per day -&gt; 1bil ad clicks per day</li>
+<li>Ad click QPS = 10,000</li>
+<li>Peak QPS is 5 times the number = 50,000</li>
+<li>A single ad click occupies 0.1KB storage. Daily storage requirement is 100gb</li>
+<li>Monthly storage = 3tb</li>
+</ul>
+<h1 id="step-2-propose-high-level-design-and-get-buy-in">Step 2 - Propose High-Level Design and Get Buy-In<a class="headerlink" href="#step-2-propose-high-level-design-and-get-buy-in" title="Permanent link">&para;</a></h1>
+<p>In this section, we discuss query API design, data model and high-level design.</p>
+<h2 id="query-api-design">Query API Design<a class="headerlink" href="#query-api-design" title="Permanent link">&para;</a></h2>
+<p>The API is a contract between the client and the server. In our case, the client is the dashboard user - data scientist/analyst, advertiser, etc.</p>
+<p>Here's our functional requirements:
+ * Aggregate the number of clicks of <code>ad_id</code> in the last Y minutes
+ * Return top N most clicked <code>ad_id</code> in the last M minutes
+ * Support aggregation filtering by different attributes</p>
+<p>We need two endpoints to achieve those requirements. Filtering can be done via query parameters on one of them.</p>
+<p><strong>Aggregate number of clicks of ad_id in the last M minutes</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>GET /v1/ads/{:ad_id}/aggregated_count
+</code></pre></div></p>
+<p>Query parameters:
+ * from - start minute. Default is now - 1 min
+ * to - end minute. Default is now
+ * filter - identifier for different filtering strategies. Eg 001 means "non-US clicks".</p>
+<p>Response:
+ * ad_id - ad identifier
+ * count - aggregated count between start and end minutes</p>
+<p><strong>Return top N most clicked ad_ids in the last M minutes</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>GET /v1/ads/popular_ads
+</code></pre></div></p>
+<p>Query parameters:
+ * count - top N most clicked ads
+ * window - aggregation window size in minutes
+ * filter - identifier for different filtering strategies</p>
+<p>Response:
+ * list of ad_ids</p>
+<h2 id="data-model">Data model<a class="headerlink" href="#data-model" title="Permanent link">&para;</a></h2>
+<p>In our system, we have raw and aggregated data.</p>
+<p>Raw data looks like this:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>[AdClickEvent] ad001, 2021-01-01 00:00:01, user 1, 207.148.22.22, USA
+</code></pre></div></p>
+<p>Here's an example in a structured format:
+| ad_id | click_timestamp     | user  | ip            | country |
+|-------|---------------------|-------|---------------|---------|
+| ad001 | 2021-01-01 00:00:01 | user1 | 207.148.22.22 | USA     |
+| ad001 | 2021-01-01 00:00:02 | user1 | 207.148.22.22 | USA     |
+| ad002 | 2021-01-01 00:00:02 | user2 | 209.153.56.11 | USA     |</p>
+<p>Here's the aggregated version:
+| ad_id | click_minute | filter_id | count |
+|-------|--------------|-----------|-------|
+| ad001 | 202101010000 | 0012      | 2     |
+| ad001 | 202101010000 | 0023      | 3     |
+| ad001 | 202101010001 | 0012      | 1     |
+| ad001 | 202101010001 | 0023      | 6     |</p>
+<p>The <code>filter_id</code> helps us achieve our filtering requirements.
+| filter_id | region | IP        | user_id |
+|-----------|--------|-----------|---------|
+| 0012      | US     | *         | *       |
+| 0013      | *      | 123.1.2.3 | *       |</p>
+<p>To support quickly returning top N most clicked ads in the last M minutes, we'll also maintain this structure:
+| most_clicked_ads   |           |                                                  |
+|--------------------|-----------|--------------------------------------------------|
+| window_size        | integer   | The aggregation window size (M) in minutes       |
+| update_time_minute | timestamp | Last updated timestamp (in 1-minute granularity) |
+| most_clicked_ads   | array     | List of ad IDs in JSON format.                   |</p>
+<p>What are some pros and cons between storing raw data and storing aggregated data?
+ * Raw data enables using the full data set and supports data filtering and recalculation
+ * On the other hand, aggregated data allows us to have a smaller data set and a faster query
+ * Raw data means having a larger data store and a slower query
+ * Aggregated data, however, is derived data, hence there is some data loss.</p>
+<p>In our design, we'll use a combination of both approaches:
+ * It's a good idea to keep the raw data around for debugging. If there is some bug in aggregation, we can discover the bug and backfill.
+ * Aggregated data should be stored as well for faster query performance.
+ * Raw data can be stored in cold storage to avoid extra storage costs.</p>
+<p>When it comes to the database, there are several factors to take into consideration:
+ * What does the data look like? Is it relational, document or blob?
+ * Is the workload read-heavy, write-heavy or both?
+ * Are transactions needed?
+ * Do the queries rely on OLAP functions like SUM and COUNT?</p>
+<p>For the raw data, we can see that the average QPS is 10k and peak QPS is 50k, so the system is write-heavy.
+On the other hand, read traffic is low as raw data is mostly used as backup if anything goes wrong.</p>
+<p>Relational databases can do the job, but it can be challenging to scale the writes. 
+Alternatively, we can use Cassandra or InfluxDB which have better native support for heavy write loads.</p>
+<p>Another option is to use Amazon S3 with a columnar data format like ORC, Parquet or AVRO. Since this setup is unfamiliar, we'll stick to Cassandra.</p>
+<p>For aggregated data, the workload is both read and write heavy as aggregated data is constantly queried for dashboards and alerts.
+It is also write-heavy as data is aggregated and written every minute by the aggregation service. 
+Hence, we'll use the same data store (Cassandra) here as well.</p>
+<h2 id="high-level-design">High-level design<a class="headerlink" href="#high-level-design" title="Permanent link">&para;</a></h2>
+<p>Here's how our system looks like:
+<img alt="high-level-design-1" src="images/high-level-design-1.png" /></p>
+<p>Data flows as an unbounded data stream on both inputs and outputs.</p>
+<p>In order to avoid having a synchronous sink, where a consumer crashing can cause the whole system to stall, 
+we'll leverage asynchronous processing using message queues (Kafka) to decouple consumers and producers.
+<img alt="high-level-design-2" src="images/high-level-design-2.png" /></p>
+<p>The first message queue stores ad click event data:
+| ad_id | click_timestamp | user_id | ip | country |
+|-------|-----------------|---------|----|---------|</p>
+<p>The second message queue contains ad click counts, aggregated per-minute:
+| ad_id | click_minute | count |
+|-------|--------------|-------|</p>
+<p>As well as top N clicked ads aggregated per minute:
+| update_time_minute | most_clicked_ads |
+|--------------------|------------------|</p>
+<p>The second message queue is there in order to achieve end to end exactly-once atomic commit semantics:
+<img alt="atomic-commit" src="images/atomic-commit.png" /></p>
+<p>For the aggregation service, using the MapReduce framework is a good option:
+<img alt="ad-count-map-reduce" src="images/ad-count-map-reduce.png" />
+<img alt="top-100-map-reduce" src="images/top-100-map-reduce.png" /></p>
+<p>Each node is responsible for one single task and it sends the processing result to the downstream node.</p>
+<p>The map node is responsible for reading from the data source, then filtering and transforming the data.</p>
+<p>For example, the map node can allocate data across different aggregation nodes based on the <code>ad_id</code>:
+<img alt="map-node" src="images/map-node.png" /></p>
+<p>Alternatively, we can distribute ads across Kafka partitions and let the aggregation nodes subscribe directly within a consumer group.
+However, the mapping node enables us to sanitize or transform the data before subsequent processing.</p>
+<p>Another reason might be that we don't have control over how data is produced, 
+so events related to the same <code>ad_id</code> might go on different partitions.</p>
+<p>The aggregate node counts ad click events by <code>ad_id</code> in-memory every minute.</p>
+<p>The reduce node collects aggregated results from aggregate node and produces the final result:
+<img alt="reduce-node" src="images/reduce-node.png" /></p>
+<p>This DAG model uses the MapReduce paradigm. It takes big data and leverages parallel distributed computing to turn it into regular-sized data.</p>
+<p>In the DAG model, intermediate data is stored in-memory and different nodes communicate with each other using TCP or shared memory.</p>
+<p>Let's explore how this model can now help us to achieve our various use-cases.</p>
+<p><strong>Use-case 1 - aggregate the number of clicks</strong>:
+<img alt="use-case-1" src="images/use-case-1.png" />
+ * Ads are partitioned using <code>ad_id % 3</code></p>
+<p><strong>Use-case 2 - return top N most clicked ads</strong>:
+<img alt="use-case-2" src="images/use-case-2.png" />
+ * In this case, we're aggregating the top 3 ads, but this can be extended to top N ads easily
+ * Each node maintains a heap data structure for fast retrieval of top N ads</p>
+<p><strong>Use-case 3 - data filtering</strong>:
+To support fast data filtering, we can predefine filtering criterias and pre-aggregate based on it:
+| ad_id | click_minute | country | count |
+|-------|--------------|---------|-------|
+| ad001 | 202101010001 | USA     | 100   |
+| ad001 | 202101010001 | GPB     | 200   |
+| ad001 | 202101010001 | others  | 3000  |
+| ad002 | 202101010001 | USA     | 10    |
+| ad002 | 202101010001 | GPB     | 25    |
+| ad002 | 202101010001 | others  | 12    |</p>
+<p>This technique is called the <strong>star schema</strong> and is widely used in data warehouses.
+The filtering fields are called <strong>dimensions</strong>.</p>
+<p>This approach has the following benefits:
+ * Simple to undertand and build
+ * Current aggregation service can be reused to create more dimensions in the star schema.
+ * Accessing data based on filtering criteria is fast as results are pre-calculated</p>
+<p>A limitation of this approach is that it creates many more buckets and records, especially when we have lots of filtering criterias.</p>
+<h1 id="step-3-design-deep-dive">Step 3 - Design Deep Dive<a class="headerlink" href="#step-3-design-deep-dive" title="Permanent link">&para;</a></h1>
+<p>Let's dive deeper into some of the more interesting topics.</p>
+<h2 id="streaming-vs-batching">Streaming vs. Batching<a class="headerlink" href="#streaming-vs-batching" title="Permanent link">&para;</a></h2>
+<p>The high-level architecture we proposed is a type of stream processing system. 
+Here's a comparison between three types of systems:
+|                         | Services (Online system)      | Batch system (offline system)                          | Streaming system (near real-time system)     |
+|-------------------------|-------------------------------|--------------------------------------------------------|----------------------------------------------|
+| Responsiveness          | Respond to the client quickly | No response to the client needed                       | No response to the client needed             |
+| Input                   | User requests                 | Bounded input with finite size. A large amount of data | Input has no boundary (infinite streams)     |
+| Output                  | Responses to clients          | Materialized views, aggregated metrics, etc.           | Materialized views, aggregated metrics, etc. |
+| Performance measurement | Availability, latency         | Throughput                                             | Throughput, latency                          |
+| Example                 | Online shopping               | MapReduce                                              | Flink [13]                                   |</p>
+<p>In our design, we used a mixture of batching and streaming. </p>
+<p>We used streaming for processing data as it arrives and generates aggregated results in near real-time.
+We used batching, on the other hand, for historical data backup.</p>
+<p>A system which contains two processing paths - batch and streaming, simultaneously, this architecture is called lambda.
+A disadvantage is that you have two processing paths with two different codebases to maintain.</p>
+<p>Kappa is an alternative architecture, which combines batch and stream processing in one processing path.
+The key idea is to use a single stream processing engine.</p>
+<p>Lambda architecture:
+<img alt="lambda-architecture" src="images/lambda-architecture.png" /></p>
+<p>Kappa architecture:
+<img alt="kappa-architecture" src="images/kappa-architecture.png" /></p>
+<p>Our high-level design uses Kappa architecture as reprocessing of historical data also goes through the aggregation service.</p>
+<p>Whenever we have to recalculate aggregated data due to eg a major bug in aggregation logic, we can recalculate the aggregation from the raw data we store.
+ * Recalculation service retrieves data from raw storage. This is a batch job.
+ * Retrieved data is sent to a dedicated aggregation service, so that the real-time processing aggregation service is not impacted.
+ * Aggregated results are sent to the second message queue, after which we update the results in the aggregation database.
+<img alt="recalculation-example" src="images/recalculation-example.png" /></p>
+<h2 id="time">Time<a class="headerlink" href="#time" title="Permanent link">&para;</a></h2>
+<p>We need a timestamp to perform aggregation. It can be generated in two places:
+ * event time - when ad click occurs
+ * Processing time - system time when the server processes the event</p>
+<p>Due to the usage of async processing (message queues) and network delays, there can be significant difference between event time and processing time.
+ * If we use processing time, aggregation results can be inaccurate
+ * If we use event time, we have to deal with delayed events</p>
+<p>There is no perfect solution, we need to consider trade-offs:
+|                 | Pros                                  | Cons                                                                                 |
+|-----------------|---------------------------------------|--------------------------------------------------------------------------------------|
+| Event time      | Aggregation results are more accurate | Clients might have the wrong time or timestamp might be generated by malicious users |
+| Processing time | Server timestamp is more reliable     | The timestamp is not accurate if event is late                                       |</p>
+<p>Since data accuracy is important, we'll use the event time for aggregation.</p>
+<p>To mitigate the issue of delayed events, a technique called "watermark" can be leveraged.</p>
+<p>In the example below, event 2 misses the window where it needs to be aggregated:
+<img alt="watermark-technique" src="images/watermark-technique.png" /></p>
+<p>However, if we purposefully extend the aggregation window, we can reduce the likelihood of missed events.
+The extended part of a window is called a "watermark":
+<img alt="watermark-2" src="images/watermark-2.png" />
+ * Short watermark increases likelihood of missed events, but reduces latency
+ * Longer watermark reduces likelihood of missed events, but increases latency</p>
+<p>There is always likelihood of missed events, regardless of the watermark's size. But there is no use in optimizing for such low-probability events.</p>
+<p>We can instead resolve such inconsistencies by doing end-of-day reconciliation.</p>
+<h2 id="aggregation-window">Aggregation window<a class="headerlink" href="#aggregation-window" title="Permanent link">&para;</a></h2>
+<p>There are four types of window functions:
+ * Tumbling (fixed) window
+ * Hopping window
+ * Sliding window
+ * Session window</p>
+<p>In our design, we leverage a tumbling window for ad click aggregations:
+<img alt="tumbling-window" src="images/tumbling-window.png" /></p>
+<p>As well as a sliding window for the top N clicked ads in M minutes aggregation:
+<img alt="sliding-window" src="images/sliding-window.png" /></p>
+<h2 id="delivery-guarantees">Delivery guarantees<a class="headerlink" href="#delivery-guarantees" title="Permanent link">&para;</a></h2>
+<p>Since the data we're aggregating is going to be used for billing, data accuracy is a priority.</p>
+<p>Hence, we need to discuss:
+ * How to avoid processing duplicate events
+ * How to ensure all events are processed</p>
+<p>There are three delivery guarantees we can use - at-most-once, at-least-once and exactly once.</p>
+<p>In most circumstances, at-least-once is sufficient when a small amount of duplicates is acceptable.
+This is not the case for our system, though, as a difference in small percent can result in millions of dollars of discrepancy.
+Hence, we'll need to use exactly-once delivery semantics.</p>
+<h2 id="data-deduplication">Data deduplication<a class="headerlink" href="#data-deduplication" title="Permanent link">&para;</a></h2>
+<p>One of the most common data quality issues is duplicated data.</p>
+<p>It can come from a wide range of sources:
+ * Client-side - a client might resend the same event multiple times. Duplicated events sent with malicious intent are best handled by a risk engine.
+ * Server outage - An aggregation service node goes down in the middle of aggregation and the upstream service hasn't received an acknowledgment so event is resent.</p>
+<p>Here's an example of data duplication occurring due to failure to acknowledge an event on the last hop:
+<img alt="data-duplication-example" src="images/data-duplication-example.png" /></p>
+<p>In this example, offset 100 will be processed and sent downstream multiple times.</p>
+<p>One option to try and mitigate this is to store the last seen offset in HDFS/S3, but this risks the result never reaching downstream:
+<img alt="data-duplication-example-2" src="images/data-duplication-example-2.png" /></p>
+<p>Finally, we can store the offset while interacting with downstream atomically. To achieve this, we need to implement a distributed transaction:
+<img alt="data-duplication-example-3" src="images/data-duplication-example-3.png" /></p>
+<p><strong>Personal side-note</strong>: Alternatively, if the downstream system handles the aggregation result idempotently, there is no need for a distributed transaction.</p>
+<h2 id="scale-the-system">Scale the system<a class="headerlink" href="#scale-the-system" title="Permanent link">&para;</a></h2>
+<p>Let's discuss how we scale the system as it grows.</p>
+<p>We have three independent components - message queue, aggregation service and database.
+Since they are decoupled, we can scale them independently.</p>
+<p>How do we scale the message queue:
+ * We don't put a limit on producers, so they can be scaled easily
+ * Consumers can be scaled by assigning them to consumer groups and increasing the number of consumers.
+ * For this to work, we also need to ensure there are enough partitions created preemptively
+ * Also, consumer rebalancing can take a while when there are thousands of consumers so it is recommended to do it off peak hours
+ * We could also consider partitioning the topic by geography, eg <code>topic_na</code>, <code>topic_eu</code>, etc.
+<img alt="scale-consumers" src="images/scale-consumers.png" /></p>
+<p>How do we scale the aggregation service:
+<img alt="aggregation-service-scaling" src="images/aggregation-service-scaling.png" />
+ * The map-reduce nodes can easily be scaled by adding more nodes
+ * The throughput of the aggregation service can be scaled by by utilising multi-threading
+ * Alternatively, we can leverage resource providers such as Apache YARN to utilize multi-processing
+ * Option 1 is easier, but option 2 is more widely used in practice as it's more scalable
+ * Here's the multi-threading example:
+<img alt="multi-threading-example" src="images/multi-threading-example.png" /></p>
+<p>How do we scale the database:
+ * If we use Cassandra, it natively supports horizontal scaling utilizing consistent hashing
+ * If a new node is added to the cluster, data automatically gets rebalanced across all (virtual) nodes
+ * With this approach, no manual (re)sharding is required
+<img alt="cassandra-scalability" src="images/cassandra-scalability.png" /></p>
+<p>Another scalability issue to consider is the hotspot issue - what if an ad is more popular and gets more attention than others?
+<img alt="hotspot-issue" src="images/hotspot-issue.png" />
+ * In the above example, aggregation service nodes can apply for extra resources via the resource manager
+ * The resource manager allocates more resources, so the original node isn't overloaded
+ * The original node splits the events into 3 groups and each of the aggregation nodes handles 100 events
+ * Result is written back to the original aggregation node</p>
+<p>Alternative, more sophisticated ways to handle the hotspot problem:
+ * Global-Local Aggregation
+ * Split Distinct Aggregation</p>
+<h2 id="fault-tolerance">Fault Tolerance<a class="headerlink" href="#fault-tolerance" title="Permanent link">&para;</a></h2>
+<p>Within the aggregation nodes, we are processing data in-memory. If a node goes down, the processed data is lost.</p>
+<p>We can leverage consumer offsets in kafka to continue from where we left off once another node picks up the slack.
+However, there is additional intermediary state we need to maintain, as we're aggregating the top N ads in M minutes.</p>
+<p>We can make snapshots at a particular minute for the on-going aggregation:
+<img alt="fault-tolerance-example" src="images/fault-tolerance-example.png" /></p>
+<p>If a node goes down, the new node can read the latest committed consumer offset, as well as the latest snapshot to continue the job:
+<img alt="fault-tolerance-recovery-example" src="images/fault-tolerance-recovery-example.png" /></p>
+<h2 id="data-monitoring-and-correctness">Data monitoring and correctness<a class="headerlink" href="#data-monitoring-and-correctness" title="Permanent link">&para;</a></h2>
+<p>As the data we're aggregating is critical as it's used for billing, it is very important to have rigorous monitoring in place in order to ensure correctness.</p>
+<p>Some metrics we might want to monitor:
+ * Latency - Timestamps of different events can be tracked in order to understand the e2e latency of the system
+ * Message queue size - If there is a sudden increase in queue size, we need to add more aggregation nodes. As Kafka is implemented via a distributed commit log, we need to keep track of records-lag metrics instead.
+ * System resources on aggregation nodes - CPU, disk, JVM, etc.</p>
+<p>We also need to implement a reconciliation flow which is a batch job, running at the end of the day. 
+It calculates the aggregated results from the raw data and compares them against the actual data stored in the aggregation database:
+<img alt="reconciliation-flow" src="images/reconciliation-flow.png" /></p>
+<h2 id="alternative-design">Alternative design<a class="headerlink" href="#alternative-design" title="Permanent link">&para;</a></h2>
+<p>In a generalist system design interview, you are not expected to know the internals of specialized software used in big data processing.</p>
+<p>Explaining the thought process and discussing trade-offs is more important than knowing specific tools, which is why the chapter covers a generic solution.</p>
+<p>An alternative design, which leverages off-the-shelf tooling, is to store ad click data in Hive with an ElasticSearch layer on top built for faster queries.</p>
+<p>Aggregation is typically done in OLAP databases such as ClickHouse or Druid.
+<img alt="alternative-design" src="images/alternative-design.png" /></p>
+<h1 id="step-4-wrap-up">Step 4 - Wrap up<a class="headerlink" href="#step-4-wrap-up" title="Permanent link">&para;</a></h1>
+<p>Things we covered:
+ * Data model and API Design
+ * Using MapReduce to aggregate ad click events
+ * Scaling the message queue, aggregation service and database
+ * Mitigating the hotspot issue
+ * Monitoring the system continuously
+ * Using reconciliation to ensure correctness
+ * Fault tolerance</p>
+<p>The ad click event aggregation is a typical big data processing system.</p>
+<p>It would be easier to understand and design it if you have prior knowledge of related technologies:
+ * Apache Kafka
+ * Apache Spark
+ * Apache Flink</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "search.suggest", "navigation.top"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,179 @@
+{
+  "nodes": [
+    {
+      "id": "0",
+      "name": "Welcome to My Notes",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "1",
+      "name": "Scale From Zero to Millions of Users",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "2",
+      "name": "Back-of-the-envelope Estimation",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "3",
+      "name": "A Framework for System Design Interviews",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "4",
+      "name": "Design a Rate Limiter",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "5",
+      "name": "Design Consistent Hashing",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "6",
+      "name": "Design a Key-Value Store",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "7",
+      "name": "Design a Unique ID Generator in Distributed Systems",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "8",
+      "name": "Design a URL Shortener",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "9",
+      "name": "Design a Web Crawler",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "10",
+      "name": "Design a Notification System",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "11",
+      "name": "Design a News Feed System",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "12",
+      "name": "Design a Chat System",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "13",
+      "name": "Design A Search Autocomplete System",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "14",
+      "name": "Design YouTube",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "15",
+      "name": "Design Google Drive",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "16",
+      "name": "Proximity Service",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "17",
+      "name": "Nearby Friends",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "18",
+      "name": "Google Maps",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "19",
+      "name": "Distributed Message Queue",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "20",
+      "name": "Metrics Monitoring and Alerting System",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "21",
+      "name": "Ad Click Event Aggregation",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "22",
+      "name": "Hotel Reservation System",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "23",
+      "name": "Distributed Email Service",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "24",
+      "name": "S3-like Object Storage",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "25",
+      "name": "Real-time Gaming Leaderboard",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "26",
+      "name": "Payment System",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "27",
+      "name": "Digital Wallet",
+      "symbolSize": 0,
+      "value": null
+    },
+    {
+      "id": "28",
+      "name": "Stock Exchange",
+      "symbolSize": 0,
+      "value": null
+    }
+  ],
+  "links": []
+}

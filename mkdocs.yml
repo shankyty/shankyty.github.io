@@ -2,6 +2,7 @@ site_name: My notes
 site_description: 'Some Notes'
 
 docs_dir: src
+site_src: site
 
 theme:
   name: material
