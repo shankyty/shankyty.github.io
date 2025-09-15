@@ -104,7 +104,7 @@ Example weekly aggregated data:
 ![weekly-aggredated-data](images/weekly-aggredated-data.png)
 
 The workers are responsible for building the trie data structure, based on aggregated data, and storing it in DB.
-
+ 
 The trie cache keeps the trie loaded in-memory for fast read. It takes a weekly snapshot of the DB.
 
 The trie DB is the persistent storage. There are two options for this problem:
