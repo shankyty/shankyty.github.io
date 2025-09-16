@@ -14,6 +14,7 @@ The complexities of building a web crawler depend on our target scale. It can be
 
 ## Step 1 - Understand the problem and establish design scope
 How it works at a high-level:
+
  - Given a set of URLs, download all the pages these URLs point to
  - Extract URLs from the web pages
  - Add the new URLs to the list of URLs to be traversed
@@ -21,6 +22,7 @@ How it works at a high-level:
 A real web crawler is much more complicated, but this is what it does in a nutshell.
 
 You'll need to clarify what kind of features your interviewer would like you to support exactly:
+
  - C: What's the main purpose of the web crawler? Search engine indexing, data mining, something else?
  - I: Search engine indexing
  - C: How many web pages does it collect per month
@@ -37,6 +39,7 @@ You'll need to clarify what kind of features your interviewer would like you to 
 This is an example conversation. It is important to go through this even if the project is simple. Your assumptions and the ones of your interviewer could differ.
 
 Other characteristics of a good web crawler:
+
  - Scalable - it should be extremely efficient
  - Robust - handle edge-cases such as bad HTML, infinite loops, server crashes, etc
  - Polite - not make too many requests to a server within a short time interval
@@ -52,6 +55,7 @@ Given average web page size is 500kb -> 500 TB per month -> 30 PB for 5y.
 ![high-level-design](images/high-level-design.png)
 
 What's going on in there?
+
  - Seed URLs - These URLs are the starting point for crawlers. It's important to pick the seed URLs well in order to traverse the web appropriately.
  - URL Frontier - This component stores the URLs to be downloaded in a FIFO queue.
  - HTML Downloader - component downloads HTML pages from URLs in the frontier.
@@ -66,6 +70,7 @@ What's going on in there?
 
 Those are all the component, but what about the workflow?
 ![web-crawler-workflow](images/web-crawler-workflow.png)
+
  1. Add Seed URLs to URL Frontier
  2. HTML Downloader fetches a list of URLs from frontier
  3. Match URLs to IP Addresses via the DNS resolver
@@ -96,6 +101,7 @@ DFS is usually not a good choice as the traversal depth can get very big
 BFS is typically preferable. It uses a FIFO queue which traverses URLs in order of encountering them.
 
 There are two problems with traditional BFS though:
+
  - Most links in a page are backlinks to the same domain, eg wikipedia.com/page -> wikipedia.com. 
    When a crawler attempts to visit those links, the server is flooded with requests which is "impolite".
  - Standard BFS doesn't take URL priority into account
@@ -108,6 +114,7 @@ A web crawler should avoid sending too many requests to the same host in a short
 
 Politeness is implemented by maintaining a download queue per hostname \w a delay between element processing:
 ![download-queue](images/download-queue.png)
+
  - The queue router ensures that each queue contains URLs from the same host.
  - Mapping table - maps each host to a queue.
 ![mapping-table](images/mapping-table.png)
