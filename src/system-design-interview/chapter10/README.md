@@ -15,26 +15,26 @@ The complexities of building a web crawler depend on our target scale. It can be
 ## Step 1 - Understand the problem and establish design scope
 How it works at a high-level:
 
- - Given a set of URLs, download all the pages these URLs point to
- - Extract URLs from the web pages
- - Add the new URLs to the list of URLs to be traversed
+  - Given a set of URLs, download all the pages these URLs point to
+  - Extract URLs from the web pages
+  - Add the new URLs to the list of URLs to be traversed
 
 A real web crawler is much more complicated, but this is what it does in a nutshell.
 
 You'll need to clarify what kind of features your interviewer would like you to support exactly:
 
- - C: What's the main purpose of the web crawler? Search engine indexing, data mining, something else?
- - I: Search engine indexing
- - C: How many web pages does it collect per month
- - I: 1 billion
- - C: What content types are included? HTML, PDF, images?
- - I: HTML only
- - C: Should we consider newly added/edited content?
- - I: Yes
- - C: Do we need to persist the crawled web pages?
- - I: Yes, for 5 years
- - C: What do we do with pages with duplicate content
- - I: Ignore them
+   - C: What's the main purpose of the web crawler? Search engine indexing, data mining, something else?
+   - I: Search engine indexing
+   - C: How many web pages does it collect per month
+  - I: 1 billion
+  - C: What content types are included? HTML, PDF, images?
+  - I: HTML only
+  - C: Should we consider newly added/edited content?
+  - I: Yes
+  - C: Do we need to persist the crawled web pages?
+  - I: Yes, for 5 years
+  - C: What do we do with pages with duplicate content
+  - I: Ignore them
 
 This is an example conversation. It is important to go through this even if the project is simple. Your assumptions and the ones of your interviewer could differ.
 

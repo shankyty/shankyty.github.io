@@ -1,27 +1,35 @@
-# Welcome to My Notes
+# System Design Interview - An Insider's Guide (vol 1 & 2)
+These notes are based on the System Design Interview books - [vol 1](https://www.goodreads.com/book/show/54109255-system-design-interview-an-insider-s-guide) and [vol 2](https://www.goodreads.com/book/show/60631342-system-design-interview-an-insider-s-guide).
 
-This is a collection of my personal notes on various topics.
+Instead of getting the physical books, I've bought the online course, so there might be some mismatch with the physical book's chapter indices. In addition to that, there could be some content updates for the online course, but not the physical books.
 
-## Interactive Graph
+**Note:** These notes are a work in progress. I'll remove this remark once I go through the whole book.
 
-```obsidian-interactive-graph
-```
-
-## Markdown Extensions
-
-We've added support for some helpful Markdown extensions.
-
-### Admonitions
-
-!!! note "This is a note"
-    You can use admonitions to call out important information.
-
-!!! warning "Danger Zone"
-    This is a warning. Be careful!
-
-### Code Highlighting
-
-```python
-def hello_world():
-    print("Hello, world!")
-```
+ * [Chapter 2 - Scale From Zero To Millions Of Users](/system-design-interview/chapter02/)
+ * [Chapter 3 - Back-of-the-envelope Estimation](/system-design-interview/chapter03/)
+ * [Chapter 4 - A Framework For System Design Interviews](/system-design-interview/chapter04/)
+ * [Chapter 5 - Design A Rate Limiter](/system-design-interview/chapter05/)
+ * [Chapter 6 - Design Consistent Hashing](/system-design-interview/chapter06/)
+ * [Chapter 7 - Design A Key-Value Store](/system-design-interview/chapter07/)
+ * [Chapter 8 - Design A Unique ID Generator In Distributed Systems](/system-design-interview/chapter08/)
+ * [Chapter 9 - Design A URL Shortener](/system-design-interview/chapter09/)
+ * [Chapter 10 - Design A Web Crawler](/system-design-interview/chapter10/)
+ * [Chapter 11 - Design A Notification System](/system-design-interview/chapter11/)
+ * [Chapter 12 - Design A News Feed System](/system-design-interview/chapter12/)
+ * [Chapter 13 - Design A Chat System](/system-design-interview/chapter13/)
+ * [Chapter 14 - Design A Search Autocomplete System](/system-design-interview/chapter14/)
+ * [Chapter 15 - Design YouTube](/system-design-interview/chapter15/)
+ * [Chapter 16 - Design Google Drive](/system-design-interview/chapter16/)
+ * [Chapter 17 - Proximity Service](/system-design-interview/chapter17/)
+ * [Chapter 18 - Nearby Friends](/system-design-interview/chapter18/)
+ * [Chapter 19 - Google Maps](/system-design-interview/chapter19/)
+ * [Chapter 20 - Distributed Message Queue](/system-design-interview/chapter20/)
+ * [Chapter 21 - Metrics Monitoring And Alerting System](/system-design-interview/chapter21/)
+ * [Chapter 22 - Ad Click Event Aggregation](/system-design-interview/chapter22/)
+ * [Chapter 23 - Hotel Reservation System](/system-design-interview/chapter23/)
+ * [Chapter 24 - Distributed Email Service](/system-design-interview/chapter24/)
+ * [Chapter 25 - S3-like Object Storage](/system-design-interview/chapter25/)
+ * [Chapter 26 - Real-time Gaming Leaderboard](/system-design-interview/chapter26/)
+ * [Chapter 27 - Payment System](/system-design-interview/chapter27/)
+ * [Chapter 28 - Digital Wallet](/system-design-interview/chapter28/)
+ * [Chapter 29 - Stock Exchange](/system-design-interview/chapter29/)
