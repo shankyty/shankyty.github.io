@@ -90,14 +90,15 @@ Some changes from the original naive design:
  - Introduce message queues to decouple system components
 
 ![high-level-design-improved](images/high-level-design-improved.png)
- - Service 1 to N - services which send notifications within our system
- - Notification servers - provide APIs for sending notifications. Visible to internal services or verified clients. Do basic validation. Fetch notification templates from database. Put notification data in message queues for parallel processing.
- - Cache - user info, device info, notification templates
- - DB - stores data about users, notifications, settings, etc.
- - Message queues - Remove dependencies across components. They serve as buffers for notifications to be sent out. Each notification provider has a different message queue assigned to avoid outages in one third-party provider to affect the rest.
- - Workers - pull notification events from message queues and send them to corresponding third-party services.
- - Third-party services - already covered in initial design.
- - iOS, Android, SMS, Email - already covered in initial design.
+
+ - Service 1 to N : services which send notifications within our system
+ - Notification servers : provide APIs for sending notifications. Visible to internal services or verified clients. Do basic validation. Fetch notification templates from database. Put notification data in message queues for parallel processing.
+ - Cache : user info, device info, notification templates
+ - DB : stores data about users, notifications, settings, etc.
+ - Message queues : Remove dependencies across components. They serve as buffers for notifications to be sent out. Each notification provider has a different message queue assigned to avoid outages in one third-party provider to affect the rest.
+ - Workers : pull notification events from message queues and send them to corresponding third-party services.
+ - Third-party services : already covered in initial design.
+ - iOS, Android, SMS, Email : already covered in initial design.
 
 Example API call to send an email:
 ```json
@@ -121,6 +122,7 @@ Example API call to send an email:
 ```
 
 Example lifecycle of a notification:
+
  - Service makes a call to make a notification
  - Notification service fetch metadata (user info, settings, etc) from database/cache 
  - Notification event is sent to corresponding queue for processing for each third-party provider.
@@ -132,6 +134,7 @@ In this section, we discuss some additional considerations for our improved desi
 
 ## Reliability
 Some questions to consider in terms of making the system reliable:
+
  - What happens in the event of data loss?
  - Will recipients receive notifications exactly once?
 
@@ -187,6 +190,7 @@ Putting everything together, here's our final design:
 ![final-design](images/final-design.png)
 
 Other features we've added:
+
  - Notification servers are equipped with authentication and rate limiting.
  - Added a retry mechanism to handle notification failures.
  - Notification templates are added to provide a coherent notification experience.
@@ -196,6 +200,7 @@ Other features we've added:
 We introduced a robust notification system which supports push notifications, sms and email. We introduced message queues to decouple system components.
 
 We also dug deeper into some components and optimizations:
+
  - Reliability - added robust retry mechanism in case of failures
  - Security - Appkey/appSecret is used to ensure only verified clients can make notifications.
  - Tracking and monitoring - implemented to monitor important stats.
