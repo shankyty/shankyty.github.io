@@ -107,12 +107,12 @@ It is fine, however, to start from a single-server design and extend it later as
 
 Here's our refined high-level design:
 ![refined-high-level-design](images/refined-high-level-design.png)
- * clients maintain a persistent web socket connection with a chat server for real-time messaging
+ * Clients maintain a persistent web socket connection with a chat server for real-time messaging
  * The chat servers facilitate message sending/receiving
  * Presense servers manage online/offline status
  * API servers handle traditional request/response-based responsibilities - login, sign up, change profile, etc.
- * Notification servers manage push notifications
- * Key-value store is used for storing chat history. When offline user goes online, they will see their chat history and missed messages.
+ * [Notification](../chapter11) servers manage push notifications
+ * [Key-value](../Chapter5) store is used for storing chat history. When offline user goes online, they will see their chat history and missed messages.
 
 ### Storage
 One important decision for the storage/data layer is whether we should go with a SQL or NoSQL database.
