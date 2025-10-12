@@ -8,7 +8,6 @@ Similar interview questions - design facebook news feed, twitter timeline, insta
 # Step 1 - Understand the problem and establish design scope
 First step is to clarify what the interviewer has in mind exactly:
 
-
  - C: Mobile, web app?
  - I: Both
  - C: What are the important features?
@@ -45,6 +44,7 @@ Here's some of the main endpoints.
 
 ## Newsfeed building
 ![newsfeed-building](images/newsfeed-building.png)
+
  - User sends request to retrieve news feed.
  - Load balancer redirects traffic to web servers.
  - Web servers - route requests to newsfeed service.
@@ -91,10 +91,12 @@ System diagram of fanout service:
  - Send friends list and post ID to the message queue.
  - Fanout workers fetch the messages and store the news feed data in a cache. They store a `<post_id, user_id>` mappings** in it which can later be retrieved.
 
-** I think there is some kind of error in this part of the book. It doesn't make sense to store a `<post_id, user_id>` mapping in the cache. Instead, it should be a `<user_id, post_id>` mapping as that allows one to quickly fetch all posts for a given user, which are part of their news feed. In addition to that, the example in the book shows that you can store multiple user_ids or post_ids as keys in the cache, which is typically not supported in eg a hashmap, but it is actually supported when you use the `Redis Sets` feature, but that is not explicitly mentioned in the chapter.
+!!! note
+    I think there is some kind of error in this part of the book. It doesn't make sense to store a `<post_id, user_id>` mapping in the cache. Instead, it should be a `<user_id, post_id>` mapping as that allows one to quickly fetch all posts for a given user, which are part of their news feed. In addition to that, the example in the book shows that you can store multiple user_ids or post_ids as keys in the cache, which is typically not supported in eg a hashmap, but it is actually supported when you use the `Redis Sets` feature, but that is not explicitly mentioned in the chapter.
 
 ## News feed retrieval deep dive
 ![news-feed-retrieval-deep-dive](images/news-feed-retrieval-deep-dive.png)
+
  - user sends request to retrieve news feed.
  - Load balancer distributes request to a set of web servers.
  - Web servers call news feed service.
