@@ -14,8 +14,8 @@ In this case, it is very important to nail down the exact requirements because c
  - C: For group chat, what is the member limit?
  - I: 100 people 
  
- !!! note
-    A 100-user limit allows for a simpler, "push-heavy" architecture that prioritizes a rich, real-time user experience for small, intimate groups.
+> **Note**
+> A 100-user limit allows for a simpler, "push-heavy" architecture that prioritizes a rich, real-time user experience for small, intimate groups.
  
  - C: What features are important? Eg attachments?
  - I: 1-on-1 and group chats. Online indicator. Text messages only.
@@ -27,6 +27,7 @@ In this case, it is very important to nail down the exact requirements because c
  - I: Forever
 
 Summary of features we'll focus on:
+ 
  - One-on-one chat with low delivery latency
  - Small group chats (100 ppl)
  - Online presence
@@ -79,8 +80,8 @@ The connection is initiated by the client and starts as HTTP, but can be upgrade
 In this setup, both clients and servers can initiate messages.
 
 One caveat with web sockets is that this is a persistent protocol, making the servers stateful. Efficient connection management is necessary when using it.
-!!! note 
-    leverage the initial HTTP upgrade request to pass a credential—either a self-contained JWT or a session cookie—which the server validates before establishing the secure, long-lived WebSocket connection.
+> **Note**
+> leverage the initial HTTP upgrade request to pass a credential—either a self-contained JWT or a session cookie—which the server validates before establishing the secure, long-lived WebSocket connection.
 
 ## High-level design
 Although we mentioned how web sockets can be useful for exchanging messages, most other standard features of our chat can use the normal request/response protocol over HTTP.
@@ -119,6 +120,7 @@ It is fine, however, to start from a single-server design and extend it later as
 
 Here's our refined high-level design:
 ![refined-high-level-design](images/refined-high-level-design.png)
+
  - Clients maintain a persistent web socket connection with a chat server for real-time messaging
  - The chat servers facilitate message sending/receiving
  - Presense servers manage online/offline status
@@ -155,14 +157,14 @@ Selecting the correct storage system for this kind of data is crucial. Author re
  - It allow easy horizontal scaling
  - It provide low latency access to data
  - Relational databases don't handle long-tail (less-frequently accessed but large part of a distribution) of data well. When indexes grow large, random access is expensive.
- !!! note 
-    the "long tail of data" refers to the massive volume of historical chat messages that are accessed very infrequently. This concept is crucial for designing a cost-effective and performant storage architecture.
+> **Note**
+> The "long tail of data" refers to the massive volume of historical chat messages that are accessed very infrequently. This concept is crucial for designing a cost-effective and performant storage architecture.
 
  - Key-value stores are widely adopted for chat systems. Facebook and Discord both use key-value stores. Facebook uses HBase, Discord uses Cassandra.
 
-|Feature / Aspect |	HBase	|Cassandra	|Winner for Chat App|
-| ---|---|---|--- |
-|Architecture	|Master-Slave (relies on HDFS & ZooKeeper)	| Peer-to-Peer / Masterless (all nodes are equal)|	Cassandra|
+| Feature / Aspect | HBase | Cassandra | Winner for Chat App |
+|---|---|---|---|
+| Architecture | Master-Slave (relies on HDFS & ZooKeeper) | Peer-to-Peer / Masterless (all nodes are equal) | Cassandra |
 |Write Performance|	Very Good, but writes require coordination.| Exceptional. Optimized for high write throughput.|	Cassandra|
 Read Performance |Excellent for range scans by row key.|	Excellent for reads by primary key.|	Cassandra (for the primary chat use case)|
 |Data Model	|Sorted Map (Row Key, Column Family, Column, Timestamp)	Partitioned |Sorted Map (Partition Key + Clustering Columns)|	Cassandra
@@ -178,7 +180,7 @@ Let's take a look at the data model for our messages.
 ![one-on-one-chat-table](images/one-on-one-chat-table.png)
 
 One caveat is that we'll use the primary key (message_id) instead of created_at to determine message sequence as messages can be sent at the same time.
-
+ 
 #### Cassendra
 ```sql
 CREATE TABLE messages (
@@ -187,7 +189,7 @@ CREATE TABLE messages (
     message_id timeuuid,
     author_id uuid,
     content text,
-    PRIMARY KEY ((chat_id), message_timestamp)
+    PRIMARY KEY ((chat_id), message_id)
 ) WITH CLUSTERING ORDER BY (message_timestamp DESC);
 ```
 
@@ -197,16 +199,37 @@ CREATE TABLE messages (
 
 - The Query: Fetching the last 50 messages is incredibly fast: SELECT * FROM messages WHERE chat_id = ? LIMIT 50;. Cassandra can just read the first 50 rows from the top of the partition on disk.
 
-!!! note
-    **Cassandra** : Writes are extremely fast. A write is appended to a commit log on disk and then added to an in-memory Memtable. The server immediately acknowledges the write. There is minimal contention. This append-only design is perfect for the firehose of new messages in a chat app
+> **Note**
+> **Cassandra**: Writes are extremely fast. A write is appended to a commit log on disk and then added to an in-memory Memtable. The server immediately acknowledges the write. There is minimal contention. This append-only design is perfect for the firehose of new messages in a chat app.
 
 ### Message table for a group chat:
 ![group-chat-table](images/group-chat-table.png)
 
 In the above table, `(channel_id, message_id)` is the primary key, while `channel_id` is also the sharding key.
 
+#### cassendra
+```sql
+CREATE TABLE messages_by_group (
+    group_id uuid,
+    message_timestamp timestamp,
+    message_id timeuuid,
+    author_id uuid,
+    author_name text, -- Denormalized for convenience
+    content text,
+    PRIMARY KEY ((group_id), message_timestamp)
+) WITH CLUSTERING ORDER BY (message_timestamp DESC);
 
-
+CREATE TABLE groups (
+    group_id uuid PRIMARY KEY,
+    group_name text,
+    creator_id uuid,
+    created_at timestamp,
+    properties map<text, text>  -- For things like group icon URL, description, etc.
+);
+```
+> **Note**
+> In a large-scale chat application with 50 million daily active users, it's not just possible, but guaranteed that two different users in the same chat group will send a message at the exact same millisecond.
+A timestamp is not unique, and using it alone as a clustering key would lead to messages being overwritten and lost forever.
 
 One interesting discussion is how should the `message_id` be generated, as it is used for message ordering. It should have two important attributes:
  - IDs must be unique
@@ -311,4 +334,3 @@ Additional talking points:
  - Error handling
  - Chat server error - what happens if a chat server goes down. Zookeeper can facilitate a hand off to another chat server.
  - Message resend mechanism - retrying and queueing are common approaches for re-sending messages.
-
