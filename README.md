@@ -1,1 +1,1 @@
-shankyty.github.io/site/system-design-interview
+https://shankyty.github.io/site/system-design-interview
