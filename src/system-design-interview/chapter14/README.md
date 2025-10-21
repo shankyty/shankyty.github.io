@@ -3,39 +3,43 @@ Search autocomplete is the feature provided by many platforms such as Amazon, Go
 ![google-search](images/google-search.png)
 
 # Step 1 - Understand the problem and establish design scope
- * C: Is the matching only supported at the beginning of a search term or eg at the middle?
- * I: Only at the beginning
- * C: How many autocompletion suggestions should the system return?
- * I: 5
- * C: Which suggestions should the system choose?
- * I: Determined by popularity based on historical query frequency
- * C: Does system support spell check?
- * I: Spell check or auto-correct is not supported.
- * C: Are search queries in English?
- * I: Yes, if time allows, we can discuss multi-language support
- * C: Is capitalization and special characters supported?
- * I: We assume all queries use lowercase characters
- * C: How many users use the product?
- * I: 10mil DAU
+
+ - C: Is the matching only supported at the beginning of a search term or eg at the middle?
+ - I: Only at the beginning
+ - C: How many autocompletion suggestions should the system return?
+ - I: 5
+ - C: Which suggestions should the system choose?
+ - I: Determined by popularity based on historical query frequency
+ - C: Does system support spell check?
+ - I: Spell check or auto-correct is not supported.
+ - C: Are search queries in English?
+ - I: Yes, if time allows, we can discuss multi-language support
+ - C: Is capitalization and special characters supported?
+ - I: We assume all queries use lowercase characters
+ - C: How many users use the product?
+ - I: 10mil DAU
 
 Summary:
- * Fast response time. An article about facebook autocomplete reviews that suggestions should be returned with 100ms delay at most to avoid stuttering
- * Relevant - autocomplete suggestions should be relevant to search term
- * Sorted - suggestions should be sorted by popularity
- * Scalable - system can handle high traffic volumes
- * Highly available - system should be up even if parts of the system are unresponsive
+
+ - Fast response time. An article about facebook autocomplete reviews that suggestions should be returned with 100ms delay at most to avoid stuttering
+ - Relevant - autocomplete suggestions should be relevant to search term
+ - Sorted - suggestions should be sorted by popularity
+ - Scalable - system can handle high traffic volumes
+ - Highly available - system should be up even if parts of the system are unresponsive
 
 # Back of the envelope estimation
- * Assume we have 10mil DAU
- * On average, person performs 10 searches per day
- * 10mil * 10 = 100mil searches per day = 100 000 000 / 86400 = 1200 searches.
- * given 4 works of 5 chars search on average -> 1200 * 20 = 24000 QPS. Peak QPS = 48000 QPS.
- * 20% of daily queries are new -> 100mil * 0.2 = 20mil new searches * 20 bytes = 400mb new data per day.
+
+ - Assume we have 10mil DAU
+ - On average, person performs 10 searches per day
+ - 10mil * 10 = 100mil searches per day = 100 000 000 / 86400 = 1200 searches.
+ - given 4 works of 5 chars search on average -> 1200 - 20 = 24000 QPS. Peak QPS = 48000 QPS.
+ - 20% of daily queries are new -> 100mil * 0.2 = 20mil new searches * 20 bytes = 400mb new data per day.
 
 # Step 2 - Propose high-level design and get buy-in
 At a high-level, the system has two components:
- * Data gathering service - gathers user input queries and aggregates them in real-time.
- * Query service - given search query, return topmost 5 suggestions.
+
+ - Data gathering service - gathers user input queries and aggregates them in real-time.
+ - Query service - given search query, return topmost 5 suggestions.
 
 ## Data gathering service
 This service is responsible for maintaining a frequency table:
@@ -57,17 +61,17 @@ In this section, we'll deep dive into several components which will improve the 
 We use relational databases in the high-level design, but to achieve a more optimal solution, we'll need to leverage a suitable data structure.
 
 We can use tries for fast string prefix retrieval.
- * It is a tree-like data structure
- * The root represents the empty string
- * Each node has 26 children, representing each of the next possible characters. To save space, we don't store empty links.
- * Each node represents a single word or prefix
- * For this problem, apart from storing the strings, we'll need to store the frequency against each leaf
+ - It is a tree-like data structure
+ - The root represents the empty string
+ - Each node has 26 children, representing each of the next possible characters. To save space, we don't store empty links.
+ - Each node represents a single word or prefix
+ - For this problem, apart from storing the strings, we'll need to store the frequency against each leaf
 ![trie-example-with-frequency](images/trie-example-with-frequency.png)
 
 To implement the algorithm, we need to:
- * first find the node representing the prefix (time complexity O(p), where p = length of prefix)
- * traverse subtree to find all leafs (time complexity O(c), where c = total children)
- * sort retrieved children by their frequencies (time complexity O(clogc), where c = total children)
+ - first find the node representing the prefix (time complexity O(p), where p = length of prefix)
+ - traverse subtree to find all leafs (time complexity O(c), where c = total children)
+ - sort retrieved children by their frequencies (time complexity O(clogc), where c = total children)
 ![trie-algorithm](images/trie-algorithm.png)
 
 This algorithm works, but there are ways to optimize it as we'll have to traverse the entire trie in the worst-case scenario.
@@ -85,8 +89,8 @@ This reduces the time complexity to `O(1)` as top K search terms are already cac
 
 ## Data gathering service
 In previous design, when user types in search term, data is updated in real-time. This is not practical on a bigger scale due to:
- * billions of queries per day
- * Top suggestions may not change much once trie is built
+ - billions of queries per day
+ - Top suggestions may not change much once trie is built
 
 Hence, we'll instead update the trie asynchronously based on analytics data:
 ![data-gathering-service](images/data-gathering-service.png)
@@ -108,8 +112,8 @@ The workers are responsible for building the trie data structure, based on aggre
 The trie cache keeps the trie loaded in-memory for fast read. It takes a weekly snapshot of the DB.
 
 The trie DB is the persistent storage. There are two options for this problem:
- * Document store (eg MongoDB) - we can periodically build the trie, serialize it and store it in the DB.
- * Key-value store (eg DynamoDB) - we can also store the trie in hashmap format.
+ - Document store (eg MongoDB) - we can periodically build the trie, serialize it and store it in the DB.
+ - Key-value store (eg DynamoDB) - we can also store the trie in hashmap format.
 ![trie-as-hashmap](images/trie-as-hashmap.png)
 
 ## Query service
@@ -117,9 +121,9 @@ The query service fetches top suggestions from Trie Cache or fallbacks to Trie D
 ![query-service-improved](images/query-service-improved.png)
 
 Some additional optimizations for the Query service:
- * Using AJAX requests on client-side - these prevent the browser from refreshing the page.
- * Data sampling - instead of logging all requests, we can log a sample of them to avoid too many logs.
- * Browser caching - since auto-complete suggestions don't change often, we can leverage the browser cache to avoid extra calls to backend.
+ - Using AJAX requests on client-side - these prevent the browser from refreshing the page.
+ - Data sampling - instead of logging all requests, we can log a sample of them to avoid too many logs.
+ - Browser caching - since auto-complete suggestions don't change often, we can leverage the browser cache to avoid extra calls to backend.
 
 Example with Google search caching search results on the browser for 1h:
 ![google-browser-caching](images/google-browser-caching.png)
@@ -132,8 +136,8 @@ The trie is created by workers using aggregated data, collected via analytics lo
 
 ### Update
 There are two options to handling updates:
- * Not updating the trie, but reconstructing it instead. This is acceptable if we don't need real-time suggestions.
- * Updating individual nodes directly - we prefer to avoid it as it's slow. Updating a single node required updating all parent nodes as well due to the cached suggestions:
+ - Not updating the trie, but reconstructing it instead. This is acceptable if we don't need real-time suggestions.
+ - Updating individual nodes directly - we prefer to avoid it as it's slow. Updating a single node required updating all parent nodes as well due to the cached suggestions:
 ![update-trie](images/update-trie.png)
 
 ### Delete
@@ -154,9 +158,9 @@ To mitigate this, we can have a dedicated shard mapper, which is responsible for
 
 # Step 4 - Wrap up
 Other talking points:
- * How to support multi-language - we store unicode characters in trie nodes, instead of ASCII.
- * What if top search queries differ across countries - we can build different tries per country and leverage CDNs to improve response time.
- * How can we support trending (real-time) search queries? - current design doesn't support this and improving it to support it is beyond the scope of the book. Some options: 
-   * Reduce working data set via sharding
-   * Change ranking model to assign more weight to recent search queries
-   * Data may come as streams which you filter upon and use map-reduce technologies to process it - Hadoop, Apache Spark, Apache Storm, Apache Kafka, etc.
+ - How to support multi-language - we store unicode characters in trie nodes, instead of ASCII.
+ - What if top search queries differ across countries - we can build different tries per country and leverage CDNs to improve response time.
+ - How can we support trending (real-time) search queries? - current design doesn't support this and improving it to support it is beyond the scope of the book. Some options: 
+   - Reduce working data set via sharding
+   - Change ranking model to assign more weight to recent search queries
+   - Data may come as streams which you filter upon and use map-reduce technologies to process it - Hadoop, Apache Spark, Apache Storm, Apache Kafka, etc.
